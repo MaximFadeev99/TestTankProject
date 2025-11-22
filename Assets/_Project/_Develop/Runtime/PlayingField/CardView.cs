@@ -1,4 +1,6 @@
 using System;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 
 namespace TestTankProject.Runtime.PlayingField
@@ -7,9 +9,11 @@ namespace TestTankProject.Runtime.PlayingField
     {
         [SerializeField] private SpriteRenderer _background;
         [SerializeField] private SpriteRenderer _icon;
+        [SerializeField] private Transform _coverTransform;
         
         private Transform _transform;
         private Vector2Int _address;
+        private Vector3 _initialCoverTransformScale;
         
         internal float HalfWidth => _background.bounds.extents.x;
         internal float HalfHeight => _background.bounds.extents.y;
@@ -23,11 +27,24 @@ namespace TestTankProject.Runtime.PlayingField
             _transform = transform;
             _address = address;
             _icon.sprite = icon;
+            _initialCoverTransformScale = _coverTransform.localScale;
         }
 
         internal void SetLocalPosition(Vector2 localPosition)
         {
             _transform.localPosition = localPosition;
+        }
+
+        internal void RaiseCover()
+        {
+            _coverTransform.DOKill();
+            _coverTransform.DOScale(Vector3.zero, 0.6f).SetEase(Ease.InBack);
+        }
+
+        internal void PutDownCover()
+        {
+            _coverTransform.DOKill();
+            _coverTransform.DOScale(_initialCoverTransformScale, 0.6f).SetEase(Ease.OutBack);
         }
 
         internal void OnHitByRaycast()
@@ -37,7 +54,7 @@ namespace TestTankProject.Runtime.PlayingField
 
         internal void Destroy()
         {
-            
+            _coverTransform.DOKill();
         }
     }
 }

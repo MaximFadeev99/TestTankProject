@@ -28,7 +28,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.66, y: 0.8, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 6527945613853651304}
   m_RootOrder: 1
@@ -328,3 +328,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _background: {fileID: 5549372478799953004}
   _icon: {fileID: 9190296471515037119}
+  _coverTransform: {fileID: 128436902025728030}
