@@ -38,7 +38,10 @@ namespace TestTankProject.Runtime.Core
             GameplayManager gameplayManager = new GameplayManager
                 (_objectResolver.Resolve<List<GameConfig>>(), 
                     _objectResolver.Resolve<List<CardIconConfig>>(),
-                    _objectResolver.Resolve<IPublisher<SetUpPlayingField>>());
+                    _objectResolver.Resolve<IPublisher<SetUpPlayingField>>(),
+                    _objectResolver.Resolve<IPublisher<UpdateCard>>(),
+                    _objectResolver.Resolve<ISubscriber<CardClickedEvent>>(),
+                    _objectResolver.Resolve<ISubscriber<PlayingFieldSetUpEvent>>());
             gameplayManager.StartGame();
         }
     }

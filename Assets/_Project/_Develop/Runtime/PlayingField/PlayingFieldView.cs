@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using MessagePipe;
 using TestTankProject.Runtime.MainMenu;
 using TestTankProject.Runtime.UI.MainMenu;
@@ -17,23 +20,29 @@ namespace TestTankProject.Runtime.PlayingField
         [SerializeField] private RectTransform _playingFieldCenterPoint;
         
         private readonly List<CardView> _createdCards = new();
+        //private readonly Dictionary<Vector2Int, CancellationTokenSource> _cardCancellationTokens = new();
 
         private Transform _transform;
-        private ISubscriber<SetUpPlayingField> _setUpSubscriber;
+        
         private IPublisher<CardClickedEvent> _cardClickedEventPublisher;
+        private IPublisher<PlayingFieldSetUpEvent> _playingFieldSetUpPublisher;
+        
         private IDisposable _disposableForSubscriptions;
         
         
         [Inject]
         private void Initialize(ISubscriber<SetUpPlayingField> setUpSubscriber, 
-            IPublisher<CardClickedEvent> cardClickedEventPublisher)
+            IPublisher<CardClickedEvent> cardClickedEventPublisher,
+            IPublisher<PlayingFieldSetUpEvent> playingFieldSetUpPublisher,
+            ISubscriber<UpdateCard> updateCardSubscriber)
         {
             _transform = transform;
-            _setUpSubscriber = setUpSubscriber;
             _cardClickedEventPublisher = cardClickedEventPublisher;
+            _playingFieldSetUpPublisher = playingFieldSetUpPublisher;
             
             DisposableBagBuilder bagBuilder = DisposableBag.CreateBuilder();
-            _setUpSubscriber.Subscribe(OnSetUpCommand).AddTo(bagBuilder);
+            setUpSubscriber.Subscribe(OnSetUpCommand).AddTo(bagBuilder);
+            updateCardSubscriber.Subscribe(OnUpdateCardCommand).AddTo(bagBuilder);
             _disposableForSubscriptions = bagBuilder.Build();
         }
 
@@ -56,12 +65,60 @@ namespace TestTankProject.Runtime.PlayingField
                         -((newCard.HalfHeight * 2 + setUpCommand.SpacingBetweenCards) * (i));
                     
                     newCard.SetLocalPosition(new Vector2(xLocalPosition, yLocalPosition));
+                    newCard.Pressed += OnCardPressed;
                     _createdCards.Add(newCard);
                 }
             }
             
             CenterPlayingFieldOnDedicatedPoint(setUpCommand.Size.x);
             ScalePlayingFieldForScreenResolution();
+            _playingFieldSetUpPublisher.Publish(new());
+        }
+
+        private async void OnUpdateCardCommand(UpdateCard updateCommand)
+        {
+            CardView targetCard = _createdCards.First(card => card.Address == updateCommand.CardAddress);
+            
+            switch (updateCommand.Action)
+            {
+                case CardActions.RaiseCover:
+                    targetCard.RaiseCover();
+                    /*CancellationTokenSource newCts = new();
+                    _cardCancellationTokens[targetCard.Address] = newCts;
+
+                    await UniTask.WaitForSeconds(duration: updateCommand.CardShowTime,
+                        cancellationToken: newCts.Token);
+                    
+                    _cardCancellationTokens.Remove(targetCard.Address);
+                    
+                    if (newCts.IsCancellationRequested)
+                        return;
+                    
+                    targetCard.PutDownCover();*/
+                    return;
+                
+                case CardActions.PutDownCover:
+
+                    /*if (_cardCancellationTokens.ContainsKey(targetCard.Address))
+                    {
+                        _cardCancellationTokens[targetCard.Address].Cancel();
+                        _cardCancellationTokens.Remove(targetCard.Address);
+                    }*/
+                    
+                    targetCard.PutDownCover();
+                    return;
+                
+                case CardActions.Remove:
+                    
+                    /*if (_cardCancellationTokens.ContainsKey(targetCard.Address))
+                    {
+                        _cardCancellationTokens[targetCard.Address].Cancel();
+                        _cardCancellationTokens.Remove(targetCard.Address);
+                    }*/
+                    
+                    targetCard.Remove();
+                    return;
+            }
         }
 
         private void CenterPlayingFieldOnDedicatedPoint(int fieldXSize)
@@ -108,6 +165,24 @@ namespace TestTankProject.Runtime.PlayingField
                 maxSurpass = 1f - (maxSurpass * 10f * ScaleDownFactor);
                 _transform.localScale = new Vector3(maxSurpass, maxSurpass, maxSurpass);
             }
+        }
+
+        private void OnCardPressed(Vector2Int cardAddress)
+        {
+            _cardClickedEventPublisher.Publish(new(cardAddress));
+        }
+
+        private void OnDestroy()
+        {
+            _disposableForSubscriptions?.Dispose();
+
+            foreach (CardView card in _createdCards)
+            {
+                card.Pressed -= OnCardPressed;
+                card.Destroy();
+            }
+            
+            _createdCards.Clear();
         }
     }
 }

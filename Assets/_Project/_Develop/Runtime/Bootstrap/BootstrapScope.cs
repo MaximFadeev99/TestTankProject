@@ -38,6 +38,8 @@ namespace TestTankProject.Runtime.Bootstrap
             builder.RegisterMessageBroker<CardClickedEvent>(messagePipeOptions);
             builder.RegisterMessageBroker<SetUpPlayingField>(messagePipeOptions);
             builder.RegisterMessageBroker<UserClickRegisteredEvent>(messagePipeOptions);
+            builder.RegisterMessageBroker<UpdateCard>(messagePipeOptions);
+            builder.RegisterMessageBroker<PlayingFieldSetUpEvent>(messagePipeOptions);
         }
     }
 }

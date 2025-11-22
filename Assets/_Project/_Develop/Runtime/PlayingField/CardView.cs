@@ -7,25 +7,32 @@ namespace TestTankProject.Runtime.PlayingField
 {
     internal class CardView : MonoBehaviour
     {
+        private const float AnimDuratiton = 0.5f;
+        
         [SerializeField] private SpriteRenderer _background;
         [SerializeField] private SpriteRenderer _icon;
         [SerializeField] private Transform _coverTransform;
         
+        private GameObject _gameObject;
         private Transform _transform;
-        private Vector2Int _address;
         private Vector3 _initialCoverTransformScale;
+        private Tween _raiseCoverTween;
+        private Tween _putDownCoverTween;
+        
         
         internal float HalfWidth => _background.bounds.extents.x;
         internal float HalfHeight => _background.bounds.extents.y;
         internal Vector2 WorldPosition => _transform.position;
+        internal Vector2Int Address { get; private set; }
 
         internal Action<Vector2Int> Pressed;
         
         internal void Initialize(string newName, Vector2Int address, Sprite icon)
         {
-            gameObject.name = newName;
+            _gameObject = gameObject;
+            _gameObject.name = newName;
             _transform = transform;
-            _address = address;
+            Address = address;
             _icon.sprite = icon;
             _initialCoverTransformScale = _coverTransform.localScale;
         }
@@ -37,24 +44,48 @@ namespace TestTankProject.Runtime.PlayingField
 
         internal void RaiseCover()
         {
-            _coverTransform.DOKill();
-            _coverTransform.DOScale(Vector3.zero, 0.6f).SetEase(Ease.InBack);
+            _putDownCoverTween?.Kill(false);
+
+            if (_raiseCoverTween != null)
+                return;
+            
+            _raiseCoverTween = _coverTransform
+                .DOScale(Vector3.zero, AnimDuratiton)
+                .SetEase(Ease.InBack)
+                .OnComplete(() => _raiseCoverTween = null);
         }
 
         internal void PutDownCover()
         {
+            _raiseCoverTween?.Kill();
+
+            if (_putDownCoverTween != null)
+                return;
+            
+            _putDownCoverTween = _coverTransform
+                .DOScale(_initialCoverTransformScale, AnimDuratiton)
+                .SetEase(Ease.OutBack)
+                .OnComplete(() => _putDownCoverTween = null);
+        }
+
+        internal async void Remove()
+        {
             _coverTransform.DOKill();
-            _coverTransform.DOScale(_initialCoverTransformScale, 0.6f).SetEase(Ease.OutBack);
+            _coverTransform.gameObject.SetActive(false);
+            await _transform.DOScale(Vector3.zero, AnimDuratiton).SetEase(Ease.InBack);
+            _gameObject.SetActive(false);
         }
 
         internal void OnHitByRaycast()
         {
-            Pressed?.Invoke(_address);
+            Pressed?.Invoke(Address);
         }
 
         internal void Destroy()
         {
-            _coverTransform.DOKill();
+            _raiseCoverTween?.Kill();
+            _putDownCoverTween?.Kill();
+            _transform.DOKill();
         }
     }
 }

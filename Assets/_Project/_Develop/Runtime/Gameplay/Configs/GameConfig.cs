@@ -12,6 +12,7 @@ namespace TestTankProject.Runtime.Gameplay
         public Vector2Int PlayingFieldSize = new Vector2Int(4,4);
         public float SpacingBetweenCards = 0.5f;
         public float InitialCardDemonstrationTime = 3f;
+        public float CardDisappearDelay = 1.1f;
         public bool ShallShuffleCards = true;
 
         private void OnValidate()
@@ -28,6 +29,13 @@ namespace TestTankProject.Runtime.Gameplay
                 CustomLogger.Log(nameof(GameConfig), $"You can't have a playing field with more than 10 cards on either dimension!", 
                     MessageTypes.Error, RecipientTypes.GD);
                 PlayingFieldSize.y = Mathf.Clamp(PlayingFieldSize.y, 1, 10);
+            }
+
+            if (PlayingFieldSize.x * PlayingFieldSize.y % RuntimeConstants.MatchingCardCount != 0)
+            {
+                CustomLogger.Log(nameof(GameConfig), $"You can't have a playing field {PlayingFieldSize.x} by {PlayingFieldSize.y}, " +
+                                                     $"because then there will be uneven card number!", 
+                    MessageTypes.Error, RecipientTypes.GD);
             }
         }
     }

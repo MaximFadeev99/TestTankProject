@@ -1,10 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using MessagePipe;
 using TestTankProject.Runtime.Bootstrap;
-using TestTankProject.Runtime.Gameplay.CardGeneration;
+using TestTankProject.Runtime.Gameplay.GameGeneration;
 using TestTankProject.Runtime.PlayingField;
 using TestTankProject.Runtime.Utilities;
 using UnityEngine;
@@ -15,12 +15,20 @@ namespace TestTankProject.Runtime.Gameplay
     {
         private readonly GameConfig _selectedGameConfig;
         private readonly CardIconConfig _selectedCardIconConfig;
+        private readonly IGameGenerator _iGameGenerator;
+        
         private readonly IPublisher<SetUpPlayingField> _setUpPlayingFieldPublisher;
-        private readonly ICardGenerator _cardGenerator;
+        private readonly IPublisher<UpdateCard> _updateCardPublisher;
+        private IDisposable _disposableForSubscriptions;
+        
+        private GameModel _currentGame;
 
         public GameplayManager(IReadOnlyList<GameConfig> allRegisteredGameConfigs, 
             IReadOnlyList<CardIconConfig> allRegisteredCardIconConfigs,
-            IPublisher<SetUpPlayingField> setUpPlayingFieldPublisher)
+            IPublisher<SetUpPlayingField> setUpPlayingFieldPublisher,
+            IPublisher<UpdateCard> updateCardPublisher,
+            ISubscriber<CardClickedEvent> cardClickedSubscriber,
+            ISubscriber<PlayingFieldSetUpEvent> playingFieldSetUpSubscriber)
         {
             try
             {
@@ -47,15 +55,81 @@ namespace TestTankProject.Runtime.Gameplay
             }
             
             _setUpPlayingFieldPublisher = setUpPlayingFieldPublisher;
-            _cardGenerator = _selectedGameConfig.ShallShuffleCards ? null : new OrderedGameGeneration();
+            _updateCardPublisher = updateCardPublisher;
+            _iGameGenerator = _selectedGameConfig.ShallShuffleCards ? null : new OrderedGameGeneration();
+            
+            DisposableBagBuilder bagBuilder = DisposableBag.CreateBuilder();
+            cardClickedSubscriber.Subscribe(OnCardClickedEvent).AddTo(bagBuilder);
+            playingFieldSetUpSubscriber.Subscribe(OnPlayingFieldSetUpEvent).AddTo(bagBuilder);
+            _disposableForSubscriptions = bagBuilder.Build();
         }
 
         public void StartGame()
         {
-            _cardGenerator.GenerateCards(_selectedGameConfig.PlayingFieldSize, _selectedCardIconConfig.CardIcons, 
-                out IReadOnlyList<CardDataForView> cardsForView);
+            IReadOnlyList<CardModel> cards = _iGameGenerator.GenerateGame(_selectedGameConfig.PlayingFieldSize, 
+                _selectedCardIconConfig.CardIcons, out IReadOnlyList<CardDataForView> cardsForView);
+            
+            _currentGame = new GameModel(_selectedGameConfig.InitialCardDemonstrationTime, 
+                _selectedGameConfig.CardDisappearDelay, 
+                cards);
+            _currentGame.ShowCard += OnShowCardCommand;
+            _currentGame.TurnCompleted += OnTurnCompleted;
+            _currentGame.CardsMatched += OnCardsMatched;
+            _currentGame.CardsMismatched += OnCardsMismatched;
+            _currentGame.GameCompleted += OnGameCompleted;
             _setUpPlayingFieldPublisher.Publish(new SetUpPlayingField(_selectedGameConfig.PlayingFieldSize, 
                 _selectedGameConfig.SpacingBetweenCards, cardsForView));
+        }
+
+        private void OnPlayingFieldSetUpEvent(PlayingFieldSetUpEvent _)
+        {
+            _currentGame.Status = GameStatus.Running;
+        }
+
+        private void OnCardClickedEvent(CardClickedEvent cardClickedEvent)
+        {
+            if (_currentGame == null || _currentGame.Status != GameStatus.Running)
+                return;
+
+            _currentGame.SelectCard(cardClickedEvent.CardAddress);
+        }
+
+        private async void OnCardsMatched(Vector2Int cardAddress1, Vector2Int cardAddress2)
+        {
+            await UniTask.WaitForSeconds(_currentGame.CardDisappearDelay);
+            
+            _updateCardPublisher.Publish(new(cardAddress1, CardActions.Remove));
+            _updateCardPublisher.Publish(new(cardAddress2, CardActions.Remove));
+        }
+
+        private async void OnCardsMismatched(Vector2Int cardAddress1, Vector2Int cardAddress2)
+        {
+            await UniTask.WaitForSeconds(_currentGame.CardDisappearDelay);
+            
+            _updateCardPublisher.Publish(new(cardAddress1, CardActions.PutDownCover));
+            _updateCardPublisher.Publish(new(cardAddress2, CardActions.PutDownCover));
+        }
+
+        private void OnShowCardCommand(Vector2Int cardAddress)
+        {
+            _updateCardPublisher.Publish(new(cardAddress, CardActions.RaiseCover));
+        }
+
+        private void OnTurnCompleted()
+        {
+            
+        }
+
+        private void OnGameCompleted()
+        {
+            _disposableForSubscriptions?.Dispose();
+            _currentGame.ShowCard -= OnShowCardCommand;
+            _currentGame.TurnCompleted -= OnTurnCompleted;
+            _currentGame.CardsMatched -= OnCardsMatched;
+            _currentGame.CardsMismatched -= OnCardsMismatched;
+            _currentGame.GameCompleted -= OnGameCompleted;
+            _currentGame = null;
+            Debug.Log("Game Completed!");
         }
     }
 }

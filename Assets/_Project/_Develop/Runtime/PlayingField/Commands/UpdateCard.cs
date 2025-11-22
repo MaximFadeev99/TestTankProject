@@ -1,16 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace TestTankProject.Runtime.PlayingField
 {
-    public readonly struct CardClickedEvent
+    public readonly struct UpdateCard
     {
         public readonly Vector2Int CardAddress;
+        public readonly CardActions Action;
 
-        public CardClickedEvent(Vector2Int cardAddress)
+        public UpdateCard(Vector2Int cardAddress, CardActions action)
         {
             CardAddress = cardAddress;
+            Action = action;
         }
     }
 }
