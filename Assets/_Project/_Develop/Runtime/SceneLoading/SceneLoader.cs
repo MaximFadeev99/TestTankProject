@@ -1,4 +1,5 @@
 using System;
+using TestTankProject.Runtime.Utilities;
 using UnityEngine.SceneManagement;
 
 namespace TestTankProject.Runtime.SceneLoading
@@ -22,7 +23,8 @@ namespace TestTankProject.Runtime.SceneLoading
                 ProjectScenes.Bootstrap => BootstrapSceneName,
                 ProjectScenes.MainMenu => MainMenuSceneName,
                 ProjectScenes.Core => CoreSceneName,
-                _ => throw new NotImplementedException()
+                _ => throw new NotImplementedException($"[{nameof(SceneLoader)}]: FAILED to load scene {targetScene}, " +
+                                                       "since no name for it is registered!")
             };
         }
     }
