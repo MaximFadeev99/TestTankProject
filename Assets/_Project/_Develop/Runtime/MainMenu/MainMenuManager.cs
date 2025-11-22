@@ -9,6 +9,7 @@ namespace TestTankProject.Runtime.MainMenu
 {
     public class MainMenuManager
     {
+        private readonly Camera _mainCamera;
         private readonly MainMenuConfig _mainMenuConfig;
         private readonly SceneLoader _sceneLoader;
         private readonly IPublisher<SetUpMainMenuView> _setUpCommandPublisher;
@@ -17,12 +18,14 @@ namespace TestTankProject.Runtime.MainMenu
         private IDisposable _disposableForSubscriptions;
 
         public MainMenuManager(MainMenuConfig mainMenuConfig, IPublisher<SetUpMainMenuView> setUpCommandPublisher,
-            ISubscriber<MainMenuButtonPressedEvent> mainMenuButtonPressedSubscriber, SceneLoader sceneLoader)
+            ISubscriber<MainMenuButtonPressedEvent> mainMenuButtonPressedSubscriber, SceneLoader sceneLoader, 
+            Camera mainCamera)
         {
             _mainMenuConfig = mainMenuConfig;
             _setUpCommandPublisher = setUpCommandPublisher;
             _mainMenuButtonPressedSubscriber = mainMenuButtonPressedSubscriber;
             _sceneLoader = sceneLoader;
+            _mainCamera = mainCamera;
         }
 
         public void SetUpMainMenu()
@@ -39,6 +42,7 @@ namespace TestTankProject.Runtime.MainMenu
             switch (pressedEvent.PressedButtonType)
             {
                 case MainMenuButtonTypes.Play:
+                    GameObject.DontDestroyOnLoad(_mainCamera);
                     _sceneLoader.LoadScene(ProjectScenes.Core);
                     break;
                 
