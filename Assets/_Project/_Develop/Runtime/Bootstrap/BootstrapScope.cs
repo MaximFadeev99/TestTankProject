@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using MessagePipe;
 using TestTankProject.Runtime.Gameplay;
 using TestTankProject.Runtime.MainMenu;
+using TestTankProject.Runtime.PlayingField;
 using TestTankProject.Runtime.SceneLoading;
 using TestTankProject.Runtime.UI.MainMenu;
 using UnityEngine;
@@ -30,6 +31,8 @@ namespace TestTankProject.Runtime.Bootstrap
         {
             builder.RegisterMessageBroker<SetUpMainMenuView>(messagePipeOptions);
             builder.RegisterMessageBroker<MainMenuButtonPressedEvent>(messagePipeOptions);
+            builder.RegisterMessageBroker<CardClickedEvent>(messagePipeOptions);
+            builder.RegisterMessageBroker<SetUpPlayingField>(messagePipeOptions);
         }
     }
 }

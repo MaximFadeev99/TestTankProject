@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using MessagePipe;
 using TestTankProject.Runtime.Gameplay;
+using TestTankProject.Runtime.PlayingField;
 using TestTankProject.Runtime.SceneLoading;
 using TestTankProject.Runtime.UI.MainMenu;
 using UnityEngine;
@@ -32,7 +33,9 @@ namespace TestTankProject.Runtime.Core
             _sceneCanvas.planeDistance = 5f;
             
             GameplayManager gameplayManager = new GameplayManager
-                (_objectResolver.Resolve<List<GameConfig>>());
+                (_objectResolver.Resolve<List<GameConfig>>(), 
+                    _objectResolver.Resolve<IPublisher<SetUpPlayingField>>());
+            gameplayManager.StartGame();
         }
     }
 }

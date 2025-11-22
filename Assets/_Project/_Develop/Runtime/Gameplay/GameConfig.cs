@@ -7,6 +7,7 @@ namespace TestTankProject.Runtime.Gameplay
     {
         public bool StartGameWithMe = false;
         public Vector2Int PlayingFieldSize = new Vector2Int(4,4);
+        public float SpacingBetweenCards = 0.5f;
         public float InitialCardDemonstrationTime = 3f;
     }
 }
