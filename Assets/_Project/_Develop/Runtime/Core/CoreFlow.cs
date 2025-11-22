@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using MessagePipe;
+using TestTankProject.Runtime.Gameplay;
 using TestTankProject.Runtime.SceneLoading;
 using TestTankProject.Runtime.UI.MainMenu;
 using UnityEngine;
@@ -14,7 +16,6 @@ namespace TestTankProject.Runtime.Core
         private readonly SceneLoader _sceneLoader;
         private readonly IObjectResolver _objectResolver;
 
-
         public CoreFlow(Camera mainCamera, Canvas sceneCanvas, SceneLoader sceneLoader,
             IObjectResolver objectResolver)
         {
@@ -29,6 +30,9 @@ namespace TestTankProject.Runtime.Core
             _sceneLoader.MoveObjectToScene(_mainCamera.gameObject, ProjectScenes.Core);
             _sceneCanvas.worldCamera = _mainCamera;
             _sceneCanvas.planeDistance = 5f;
+            
+            GameplayManager gameplayManager = new GameplayManager
+                (_objectResolver.Resolve<List<GameConfig>>());
         }
     }
 }

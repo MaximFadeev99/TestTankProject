@@ -199,7 +199,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentReference:
-    TypeName: 
+    TypeName: TestTankProject.Runtime.Bootstrap.BootstrapScope
   autoRun: 1
   autoInjectGameObjects: []
   _sceneCanvas: {fileID: 1037099050}

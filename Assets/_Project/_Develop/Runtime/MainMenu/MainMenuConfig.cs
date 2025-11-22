@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 
 namespace TestTankProject.Runtime.MainMenu
 {
-    [CreateAssetMenu(fileName = "MainMenuConfig_New", menuName = "_Project/MainMenuConfig")]
+    [CreateAssetMenu(fileName = "MainMenuConfig_New", menuName = "TestTankProject/MainMenuConfig", order = 51)]
     public class MainMenuConfig : ScriptableObject
     {
         [SerializeField] private List<MainMenuButtonData> _mainMenuButtons;

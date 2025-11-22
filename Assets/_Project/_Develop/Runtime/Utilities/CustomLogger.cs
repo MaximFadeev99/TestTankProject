@@ -8,7 +8,7 @@ namespace TestTankProject.Runtime.Utilities
         public static void Log(string scriptName, string message, 
             MessageTypes messageType, RecipientTypes recipientType = RecipientTypes.DEV) 
         {
-            string compiledMessage = $"[{recipientType}]--{scriptName}: {message}";
+            string compiledMessage = $"[{recipientType}]--{scriptName}--: {message}";
 
             switch (messageType) 
             {

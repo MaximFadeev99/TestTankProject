@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using MessagePipe;
+using TestTankProject.Runtime.Gameplay;
 using TestTankProject.Runtime.MainMenu;
 using TestTankProject.Runtime.SceneLoading;
 using TestTankProject.Runtime.UI.MainMenu;
@@ -10,6 +12,7 @@ namespace TestTankProject.Runtime.Bootstrap
 {
     public class BootstrapScope : LifetimeScope
     {
+        [SerializeField] private List<GameConfig> _registeredGameConfigs;
         
         protected override void Configure(IContainerBuilder builder)
         {
@@ -17,6 +20,7 @@ namespace TestTankProject.Runtime.Bootstrap
             RegisterMessageBrokers(builder, options);
             
             builder.RegisterInstance(Camera.main);
+            builder.RegisterInstance(_registeredGameConfigs);
             builder.Register<SceneLoader>(Lifetime.Singleton);
                 
             builder.RegisterEntryPoint<BootstrapFlow>();
