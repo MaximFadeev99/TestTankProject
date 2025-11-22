@@ -1,5 +1,8 @@
 using MessagePipe;
+using TestTankProject.Runtime.MainMenu;
 using TestTankProject.Runtime.SceneLoading;
+using TestTankProject.Runtime.UI.MainMenu;
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
@@ -7,12 +10,22 @@ namespace TestTankProject.Runtime.Bootstrap
 {
     public class BootstrapScope : LifetimeScope
     {
+        
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.RegisterMessagePipe();
+            MessagePipeOptions options = builder.RegisterMessagePipe();
+            RegisterMessageBrokers(builder, options);
+            
+            builder.RegisterInstance(Camera.main);
             builder.Register<SceneLoader>(Lifetime.Singleton);
                 
             builder.RegisterEntryPoint<BootstrapFlow>();
+        }
+        
+        private void RegisterMessageBrokers(IContainerBuilder builder, MessagePipeOptions messagePipeOptions)
+        {
+            builder.RegisterMessageBroker<SetUpMainMenuView>(messagePipeOptions);
+            builder.RegisterMessageBroker<MainMenuButtonPressedEvent>(messagePipeOptions);
         }
     }
 }

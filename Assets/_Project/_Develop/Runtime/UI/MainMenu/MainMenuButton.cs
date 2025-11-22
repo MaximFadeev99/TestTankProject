@@ -18,6 +18,7 @@ namespace TestTankProject.Runtime.UI.MainMenu
 
         internal void Initialize(MainMenuButtonTypes type, string caption)
         {
+            gameObject.name = $"Button_{type}";
             _button = GetComponent<Button>();
             _button.onClick.AddListener(OnButtonClick);
             Type = type;

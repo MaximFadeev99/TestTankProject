@@ -1,5 +1,6 @@
 using System;
 using TestTankProject.Runtime.Utilities;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace TestTankProject.Runtime.SceneLoading
@@ -16,6 +17,13 @@ namespace TestTankProject.Runtime.SceneLoading
             SceneManager.LoadScene(targetSceneName);
         }
 
+        public void MoveObjectToScene(GameObject gameObject, ProjectScenes targetScene)
+        {
+            string targetSceneName = GetSceneNameByEnum(targetScene);
+            Scene scene = SceneManager.GetSceneByName(targetSceneName);
+            SceneManager.MoveGameObjectToScene(gameObject, scene);
+        }
+
         private string GetSceneNameByEnum(ProjectScenes targetScene)
         {
             return targetScene switch
@@ -23,7 +31,7 @@ namespace TestTankProject.Runtime.SceneLoading
                 ProjectScenes.Bootstrap => BootstrapSceneName,
                 ProjectScenes.MainMenu => MainMenuSceneName,
                 ProjectScenes.Core => CoreSceneName,
-                _ => throw new NotImplementedException($"[{nameof(SceneLoader)}]: FAILED to load scene {targetScene}, " +
+                _ => throw new NotImplementedException($"[{nameof(SceneLoader)}]: FAILED to get a scene name for {targetScene}, " +
                                                        "since no name for it is registered!")
             };
         }
