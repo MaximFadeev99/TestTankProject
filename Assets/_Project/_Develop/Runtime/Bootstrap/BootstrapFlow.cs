@@ -1,4 +1,5 @@
 using TestTankProject.Runtime.SceneLoading;
+using TestTankProject.Runtime.UserInput;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -8,11 +9,13 @@ namespace TestTankProject.Runtime
     {
         private readonly SceneLoader _sceneLoader;
         private readonly Camera _mainCamera;
+        private readonly InputLogger _inputLogger;
 
-        public BootstrapFlow(SceneLoader sceneLoader, Camera mainCamera)
+        public BootstrapFlow(SceneLoader sceneLoader, Camera mainCamera, InputLogger inputLogger)
         {
             _sceneLoader = sceneLoader;
             _mainCamera = mainCamera;
+            _inputLogger = inputLogger;
         }
 
         public void Start()

@@ -4,6 +4,7 @@ using TestTankProject.Runtime.Gameplay;
 using TestTankProject.Runtime.PlayingField;
 using TestTankProject.Runtime.SceneLoading;
 using TestTankProject.Runtime.UI.MainMenu;
+using TestTankProject.Runtime.UserInput;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -16,14 +17,16 @@ namespace TestTankProject.Runtime.Core
         private readonly Canvas _sceneCanvas;
         private readonly SceneLoader _sceneLoader;
         private readonly IObjectResolver _objectResolver;
+        private readonly Raycaster _raycaster;
 
-        public CoreFlow(Camera mainCamera, Canvas sceneCanvas, SceneLoader sceneLoader,
+        public CoreFlow(Camera mainCamera, Canvas sceneCanvas, SceneLoader sceneLoader, Raycaster raycaster,
             IObjectResolver objectResolver)
         {
             _mainCamera = mainCamera;
             _sceneCanvas = sceneCanvas;
             _sceneLoader = sceneLoader;
             _objectResolver = objectResolver;
+            _raycaster = raycaster;
         }
 
         public void Start()

@@ -30,6 +30,11 @@ namespace TestTankProject.Runtime.PlayingField
             _transform.localPosition = localPosition;
         }
 
+        internal void OnHitByRaycast()
+        {
+            Pressed?.Invoke(_address);
+        }
+
         internal void Destroy()
         {
             

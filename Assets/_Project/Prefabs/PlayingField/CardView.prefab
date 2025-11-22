@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 128436902025728030}
   - component: {fileID: 79507607191932997}
   - component: {fileID: 8786597133497278728}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cover
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,7 +121,7 @@ GameObject:
   m_Component:
   - component: {fileID: 67720534384678715}
   - component: {fileID: 5549372478799953004}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -206,7 +206,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8186666411154040774}
   - component: {fileID: 9190296471515037119}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -290,7 +290,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6527945613853651304}
   - component: {fileID: 6327988617650103551}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: CardView
   m_TagString: Untagged
   m_Icon: {fileID: 0}

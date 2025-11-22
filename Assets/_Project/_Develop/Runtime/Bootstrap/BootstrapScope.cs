@@ -5,6 +5,7 @@ using TestTankProject.Runtime.MainMenu;
 using TestTankProject.Runtime.PlayingField;
 using TestTankProject.Runtime.SceneLoading;
 using TestTankProject.Runtime.UI.MainMenu;
+using TestTankProject.Runtime.UserInput;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -25,6 +26,7 @@ namespace TestTankProject.Runtime.Bootstrap
             builder.RegisterInstance(_registeredGameConfigs);
             builder.RegisterInstance(_registeredCardIconConfigs);
             builder.Register<SceneLoader>(Lifetime.Singleton);
+            builder.Register<InputLogger>(Lifetime.Singleton);
                 
             builder.RegisterEntryPoint<BootstrapFlow>();
         }
@@ -35,6 +37,7 @@ namespace TestTankProject.Runtime.Bootstrap
             builder.RegisterMessageBroker<MainMenuButtonPressedEvent>(messagePipeOptions);
             builder.RegisterMessageBroker<CardClickedEvent>(messagePipeOptions);
             builder.RegisterMessageBroker<SetUpPlayingField>(messagePipeOptions);
+            builder.RegisterMessageBroker<UserClickRegisteredEvent>(messagePipeOptions);
         }
     }
 }
