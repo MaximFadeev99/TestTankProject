@@ -1,6 +1,7 @@
 using System;
 using TestTankProject.Runtime.Utilities;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace TestTankProject.Runtime.Gameplay
 {
@@ -11,6 +12,7 @@ namespace TestTankProject.Runtime.Gameplay
         public Vector2Int PlayingFieldSize = new Vector2Int(4,4);
         public float SpacingBetweenCards = 0.5f;
         public float InitialCardDemonstrationTime = 3f;
+        public bool ShallShuffleCards = true;
 
         private void OnValidate()
         {

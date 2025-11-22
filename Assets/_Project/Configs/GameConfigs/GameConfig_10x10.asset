@@ -10,10 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 064f6b40813008446bd573b7ff55ce78, type: 3}
-  m_Name: GameConfig_4x4
+  m_Name: GameConfig_10x10
   m_EditorClassIdentifier: 
-  StartGameWithMe: 1
-  PlayingFieldSize: {x: 4, y: 4}
+  StartGameWithMe: 0
+  PlayingFieldSize: {x: 10, y: 10}
   SpacingBetweenCards: 0.5
   InitialCardDemonstrationTime: 3
-  ShallShuffleCards: 0

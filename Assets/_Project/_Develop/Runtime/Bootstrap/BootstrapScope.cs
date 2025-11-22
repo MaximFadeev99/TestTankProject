@@ -14,6 +14,7 @@ namespace TestTankProject.Runtime.Bootstrap
     public class BootstrapScope : LifetimeScope
     {
         [SerializeField] private List<GameConfig> _registeredGameConfigs;
+        [SerializeField] private List<CardIconConfig> _registeredCardIconConfigs;
         
         protected override void Configure(IContainerBuilder builder)
         {
@@ -22,6 +23,7 @@ namespace TestTankProject.Runtime.Bootstrap
             
             builder.RegisterInstance(Camera.main);
             builder.RegisterInstance(_registeredGameConfigs);
+            builder.RegisterInstance(_registeredCardIconConfigs);
             builder.Register<SceneLoader>(Lifetime.Singleton);
                 
             builder.RegisterEntryPoint<BootstrapFlow>();

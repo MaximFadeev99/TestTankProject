@@ -10,6 +10,8 @@ namespace TestTankProject.Runtime.PlayingField
 {
     public class PlayingFieldView : MonoBehaviour
     {
+        private const float ScaleDownFactor = 0.013f;
+        
         [SerializeField] private CardView _cardPrefab;
         [SerializeField] private Transform _cardContainer;
         [SerializeField] private RectTransform _playingFieldCenterPoint;
@@ -42,7 +44,9 @@ namespace TestTankProject.Runtime.PlayingField
                 for (int j = 0; j < setUpCommand.Size.x; j++)
                 {
                     CardView newCard = Instantiate(_cardPrefab, _cardContainer);
-                    newCard.Initialize($"{nameof(CardView)}_{_createdCards.Count+1}");
+                    newCard.Initialize($"{nameof(CardView)}_{_createdCards.Count+1}", 
+                        setUpCommand.CardData[_createdCards.Count].Address,
+                        setUpCommand.CardData[_createdCards.Count].Icon);
 
                     float xLocalPosition = j == 0
                         ? 0 : 
@@ -87,33 +91,21 @@ namespace TestTankProject.Runtime.PlayingField
             Vector3[] worldCorners = new Vector3[4];
             _playingFieldCenterPoint.GetWorldCorners(worldCorners);
             
-            
-            /*float xSurpass = Vector2.Distance(_createdCards[0].WorldPosition, worldCorners[1]);
-            float ySurpass = _createdCards[0].WorldPosition.y - worldCorners[1].y;*/
-            /*float xSurpass = _createdCards[0].WorldPosition.x - worldCorners[1].x;
-            float ySurpass = _createdCards[0].WorldPosition.y - worldCorners[1].y;*/
-            
-            
             float xSurpass = worldCorners[1].x - _createdCards[0].WorldPosition.x;
             float ySurpass = _createdCards[0].WorldPosition.y - worldCorners[1].y;
             float absXSurpass = Mathf.Abs(xSurpass);
             float absYSurpass = Mathf.Abs(ySurpass);
-            Debug.Log($"worldCorner: {worldCorners[1]}");
-            Debug.Log($"xSurpass: {xSurpass}");
-            Debug.Log($"ySurpass: {ySurpass}");
             
             if (xSurpass < 0f && ySurpass < 0f && absXSurpass > 1f && absYSurpass > 1f)
             {
                 float scaleFactor = -(ySurpass > xSurpass ? ySurpass : xSurpass);
-                _transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+                _transform.localScale = new(scaleFactor, scaleFactor, scaleFactor);
             }
-
-            float scaleDownFactor = 0.013f;
             
             if (xSurpass > 0f || ySurpass > 0f)
             {
                 float maxSurpass = ySurpass < xSurpass ? xSurpass : ySurpass;
-                maxSurpass = 1f - (maxSurpass * 10 * scaleDownFactor);
+                maxSurpass = 1f - (maxSurpass * 10f * ScaleDownFactor);
                 _transform.localScale = new Vector3(maxSurpass, maxSurpass, maxSurpass);
             }
         }
