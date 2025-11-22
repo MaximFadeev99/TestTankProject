@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: GameConfig_4x4
   m_EditorClassIdentifier: 
   StartGameWithMe: 1
-  PlayingFieldSize: {x: 4, y: 1}
+  PlayingFieldSize: {x: 10, y: 10}
   SpacingBetweenCards: 0.5
   InitialCardDemonstrationTime: 3

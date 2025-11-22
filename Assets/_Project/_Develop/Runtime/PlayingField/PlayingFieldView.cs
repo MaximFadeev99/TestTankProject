@@ -12,7 +12,7 @@ namespace TestTankProject.Runtime.PlayingField
     {
         [SerializeField] private CardView _cardPrefab;
         [SerializeField] private Transform _cardContainer;
-        [SerializeField] private Transform _playingFieldCenterPoint;
+        [SerializeField] private RectTransform _playingFieldCenterPoint;
         
         private readonly List<CardView> _createdCards = new();
 
@@ -37,9 +37,6 @@ namespace TestTankProject.Runtime.PlayingField
 
         private void OnSetUpCommand(SetUpPlayingField setUpCommand)
         {
-            float yOffset = 0f;
-            float xOffset = 0f;
-            
             for (int i = 0; i < setUpCommand.Size.y; i++)
             {
                 for (int j = 0; j < setUpCommand.Size.x; j++)
@@ -57,6 +54,67 @@ namespace TestTankProject.Runtime.PlayingField
                     newCard.SetLocalPosition(new Vector2(xLocalPosition, yLocalPosition));
                     _createdCards.Add(newCard);
                 }
+            }
+            
+            CenterPlayingFieldOnDedicatedPoint(setUpCommand.Size.x);
+            ScalePlayingFieldForScreenResolution();
+        }
+
+        private void CenterPlayingFieldOnDedicatedPoint(int fieldXSize)
+        {
+            Vector2 cardContainerCenter = FindCardContainerCenterPoint(fieldXSize);
+            _cardContainer.SetParent(null);
+            _transform.position = new Vector3(_playingFieldCenterPoint.position.x, 
+                _playingFieldCenterPoint.position.y, 0f);
+            _cardContainer.SetParent(_transform);
+            _cardContainer.localPosition = new Vector2(-cardContainerCenter.x, -cardContainerCenter.y);
+        }
+
+        private Vector2 FindCardContainerCenterPoint(int fieldXSize)
+        {
+            Vector2 point1 = _createdCards[0].WorldPosition;
+            Vector2 point2 = _createdCards[fieldXSize - 1].WorldPosition;
+            Vector2 point3 = _createdCards[^1].WorldPosition;
+
+            float centerXPosition = point1.x + Vector2.Distance(point2, point1) / 2f;
+            float centerYPosition = point2.y - Vector2.Distance(point2, point3) / 2f;
+            
+            return new(centerXPosition, centerYPosition);
+        }
+        
+        private void ScalePlayingFieldForScreenResolution()
+        {
+            Vector3[] worldCorners = new Vector3[4];
+            _playingFieldCenterPoint.GetWorldCorners(worldCorners);
+            
+            
+            /*float xSurpass = Vector2.Distance(_createdCards[0].WorldPosition, worldCorners[1]);
+            float ySurpass = _createdCards[0].WorldPosition.y - worldCorners[1].y;*/
+            /*float xSurpass = _createdCards[0].WorldPosition.x - worldCorners[1].x;
+            float ySurpass = _createdCards[0].WorldPosition.y - worldCorners[1].y;*/
+            
+            
+            float xSurpass = worldCorners[1].x - _createdCards[0].WorldPosition.x;
+            float ySurpass = _createdCards[0].WorldPosition.y - worldCorners[1].y;
+            float absXSurpass = Mathf.Abs(xSurpass);
+            float absYSurpass = Mathf.Abs(ySurpass);
+            Debug.Log($"worldCorner: {worldCorners[1]}");
+            Debug.Log($"xSurpass: {xSurpass}");
+            Debug.Log($"ySurpass: {ySurpass}");
+            
+            if (xSurpass < 0f && ySurpass < 0f && absXSurpass > 1f && absYSurpass > 1f)
+            {
+                float scaleFactor = -(ySurpass > xSurpass ? ySurpass : xSurpass);
+                _transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+            }
+
+            float scaleDownFactor = 0.013f;
+            
+            if (xSurpass > 0f || ySurpass > 0f)
+            {
+                float maxSurpass = ySurpass < xSurpass ? xSurpass : ySurpass;
+                maxSurpass = 1f - (maxSurpass * 10 * scaleDownFactor);
+                _transform.localScale = new Vector3(maxSurpass, maxSurpass, maxSurpass);
             }
         }
     }

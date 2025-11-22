@@ -12,7 +12,7 @@ namespace TestTankProject.Runtime.PlayingField
         
         internal float HalfWidth => _spriteRenderer.bounds.extents.x;
         internal float HalfHeight => _spriteRenderer.bounds.extents.y;
-        internal  Vector2 LocalPosition => _transform.localPosition;
+        internal Vector2 WorldPosition => _transform.position;
 
         internal void Initialize(string newName)
         {

@@ -1,3 +1,5 @@
+using System;
+using TestTankProject.Runtime.Utilities;
 using UnityEngine;
 
 namespace TestTankProject.Runtime.Gameplay
@@ -9,5 +11,22 @@ namespace TestTankProject.Runtime.Gameplay
         public Vector2Int PlayingFieldSize = new Vector2Int(4,4);
         public float SpacingBetweenCards = 0.5f;
         public float InitialCardDemonstrationTime = 3f;
+
+        private void OnValidate()
+        {
+            if (PlayingFieldSize.x > 10 || PlayingFieldSize.x < 1)
+            {
+                CustomLogger.Log(nameof(GameConfig), $"You can't have a playing field with more than 10 cards on either dimension!", 
+                    MessageTypes.Error, RecipientTypes.GD);
+                PlayingFieldSize.x = Mathf.Clamp(PlayingFieldSize.x, 1, 10);
+            }
+            
+            if (PlayingFieldSize.y > 10 || PlayingFieldSize.y < 1)
+            {
+                CustomLogger.Log(nameof(GameConfig), $"You can't have a playing field with more than 10 cards on either dimension!", 
+                    MessageTypes.Error, RecipientTypes.GD);
+                PlayingFieldSize.y = Mathf.Clamp(PlayingFieldSize.y, 1, 10);
+            }
+        }
     }
 }
