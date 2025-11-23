@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using BaseBuilding.Tests;
 using MessagePipe;
+using Newtonsoft.Json;
+using TestTankProject.Runtime.Core.SaveLoad;
 using TestTankProject.Runtime.Gameplay;
 using TestTankProject.Runtime.MainMenu;
 using TestTankProject.Runtime.PlayingField;
@@ -24,6 +27,7 @@ namespace TestTankProject.Runtime.Bootstrap
         {
             MessagePipeOptions options = builder.RegisterMessagePipe();
             RegisterMessageBrokers(builder, options);
+            RegisterJsonSerializer(builder);
             
             builder.RegisterInstance(Camera.main);
             builder.RegisterInstance(_registeredGameConfigs);
@@ -31,6 +35,8 @@ namespace TestTankProject.Runtime.Bootstrap
             builder.Register<SceneLoader>(Lifetime.Singleton);
             builder.Register<InputLogger>(Lifetime.Singleton);
             builder.Register<Raycaster>(Lifetime.Singleton);
+            builder.Register<SpriteLoader>(Lifetime.Singleton);
+            
                 
             builder.RegisterEntryPoint<BootstrapFlow>();
         }
@@ -47,6 +53,21 @@ namespace TestTankProject.Runtime.Bootstrap
             builder.RegisterMessageBroker<UpdateScoreboard>(messagePipeOptions);
             builder.RegisterMessageBroker<ReturnButtonPressedEvent>(messagePipeOptions);
             builder.RegisterMessageBroker<DrawEndGamePanel>(messagePipeOptions);
+        }
+
+        private void RegisterJsonSerializer(IContainerBuilder builder)
+        {
+            JsonSerializerSettings settings = new()
+            {
+                Formatting = Formatting.Indented,
+                Converters = new List<JsonConverter>()
+                {
+                    new Vector2IntConverter()
+                }
+            };
+
+            JsonSerializer jsonSerializer = JsonSerializer.Create(settings);
+            builder.RegisterInstance(jsonSerializer);
         }
     }
 }
