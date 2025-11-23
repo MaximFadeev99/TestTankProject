@@ -1,7 +1,9 @@
+using TestTankProject.Runtime.Bootstrap;
 using UnityEngine;
 
 namespace TestTankProject.Runtime.PlayingField
 {
+    [Message]
     public readonly struct UpdateCard
     {
         public readonly Vector2Int CardAddress;

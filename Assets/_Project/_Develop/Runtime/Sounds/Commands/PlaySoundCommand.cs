@@ -1,7 +1,9 @@
 using TestTankProject.Runtime._Project._Develop.Runtime.Sounds;
+using TestTankProject.Runtime.Bootstrap;
 
 namespace TestTankProject.Runtime.Core.Sounds
 {
+    [Message]
     public readonly struct PlaySoundCommand 
     {
         public readonly SoundTypes SoundType;

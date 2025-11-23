@@ -1,23 +1,20 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using BaseBuilding.Tests;
 using MessagePipe;
 using Newtonsoft.Json;
 using TestTankProject.Runtime.Core.SaveLoad;
-using TestTankProject.Runtime.Core.Sounds;
 using TestTankProject.Runtime.Gameplay;
-using TestTankProject.Runtime.MainMenu;
-using TestTankProject.Runtime.PlayingField;
 using TestTankProject.Runtime.SaveLoad;
 using TestTankProject.Runtime.SceneLoading;
 using TestTankProject.Runtime.Sounds;
-using TestTankProject.Runtime.UI.EndGamePanel;
-using TestTankProject.Runtime.UI.EndGamePanel.Commands;
-using TestTankProject.Runtime.UI.MainMenu;
-using TestTankProject.Runtime.UI.Scoreboard;
 using TestTankProject.Runtime.UserInput;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using ContainerBuilderExtensions = MessagePipe.ContainerBuilderExtensions;
 
 namespace TestTankProject.Runtime.Bootstrap
 {
@@ -51,17 +48,21 @@ namespace TestTankProject.Runtime.Bootstrap
         
         private void RegisterMessageBrokers(IContainerBuilder builder, MessagePipeOptions messagePipeOptions)
         {
-            builder.RegisterMessageBroker<SetUpMainMenuView>(messagePipeOptions);
-            builder.RegisterMessageBroker<MainMenuButtonPressedEvent>(messagePipeOptions);
-            builder.RegisterMessageBroker<CardClickedEvent>(messagePipeOptions);
-            builder.RegisterMessageBroker<SetUpPlayingField>(messagePipeOptions);
-            builder.RegisterMessageBroker<UserClickRegisteredEvent>(messagePipeOptions);
-            builder.RegisterMessageBroker<UpdateCard>(messagePipeOptions);
-            builder.RegisterMessageBroker<PlayingFieldSetUpEvent>(messagePipeOptions);
-            builder.RegisterMessageBroker<UpdateScoreboard>(messagePipeOptions);
-            builder.RegisterMessageBroker<ReturnButtonPressedEvent>(messagePipeOptions);
-            builder.RegisterMessageBroker<DrawEndGamePanel>(messagePipeOptions);
-            builder.RegisterMessageBroker<PlaySoundCommand>(messagePipeOptions);
+            Assembly currentAssembly = Assembly.GetExecutingAssembly();
+            MethodInfo genericBindMethod = typeof(ContainerBuilderExtensions).GetMethods()
+                .First(method => method.Name == "RegisterMessageBroker" && method.IsGenericMethod);
+            object[] methodArgs = { builder, messagePipeOptions };
+
+            foreach (Type type in currentAssembly.GetTypes())
+            {
+                MessageAttribute targetAttribute = type.GetCustomAttribute<MessageAttribute>();
+                
+                if (targetAttribute == null)
+                    continue;
+
+                MethodInfo concreteBindMethod = genericBindMethod.MakeGenericMethod(type);
+                concreteBindMethod.Invoke(builder, methodArgs);
+            }
         }
 
         private void RegisterJsonSerializer(IContainerBuilder builder)

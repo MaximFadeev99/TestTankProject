@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using TestTankProject.Runtime.Bootstrap;
 using TestTankProject.Runtime.Gameplay;
 using UnityEngine;
 
 namespace TestTankProject.Runtime.PlayingField
 {
+    [Message]
     public readonly struct SetUpPlayingField
     {
         public readonly Vector2Int Size;

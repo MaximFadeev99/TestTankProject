@@ -1,5 +1,8 @@
+using TestTankProject.Runtime.Bootstrap;
+
 namespace TestTankProject.Runtime.UI.Scoreboard
 {
+    [Message]
     public readonly struct UpdateScoreboard
     {
         public readonly int CurrentPoints;
