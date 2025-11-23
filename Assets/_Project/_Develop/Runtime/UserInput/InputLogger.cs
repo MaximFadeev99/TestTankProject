@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using MessagePipe;
 using TestTankProject.UserInput;
 using UnityEngine;
@@ -22,8 +23,9 @@ namespace TestTankProject.Runtime.UserInput
             _inputMap.Default.ClickPosition.performed += OnCursorMoved;
         }
 
-        private void OnClickPerformed(CallbackContext context)
+        private async void OnClickPerformed(CallbackContext context)
         {
+            await UniTask.Yield();
             _userClickPublisher.Publish(new(_interactionScreenPosition));
         }
         

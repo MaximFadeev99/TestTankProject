@@ -30,15 +30,6 @@ namespace TestTankProject.UserInput
             ""id"": ""bd0fa354-87b8-4bc2-9d36-9c1f4a988b93"",
             ""actions"": [
                 {
-                    ""name"": ""Click"",
-                    ""type"": ""Button"",
-                    ""id"": ""1e3e7edf-ce94-42fa-880a-8101d2ed70d3"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""ClickPosition"",
                     ""type"": ""Value"",
                     ""id"": ""c1a32b5d-6a0c-40ee-bc17-4560a13eb744"",
@@ -46,6 +37,15 @@ namespace TestTankProject.UserInput
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Click"",
+                    ""type"": ""Button"",
+                    ""id"": ""1e3e7edf-ce94-42fa-880a-8101d2ed70d3"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -117,8 +117,8 @@ namespace TestTankProject.UserInput
 }");
             // Default
             m_Default = asset.FindActionMap("Default", throwIfNotFound: true);
-            m_Default_Click = m_Default.FindAction("Click", throwIfNotFound: true);
             m_Default_ClickPosition = m_Default.FindAction("ClickPosition", throwIfNotFound: true);
+            m_Default_Click = m_Default.FindAction("Click", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -180,14 +180,14 @@ namespace TestTankProject.UserInput
         // Default
         private readonly InputActionMap m_Default;
         private List<IDefaultActions> m_DefaultActionsCallbackInterfaces = new List<IDefaultActions>();
-        private readonly InputAction m_Default_Click;
         private readonly InputAction m_Default_ClickPosition;
+        private readonly InputAction m_Default_Click;
         public struct DefaultActions
         {
             private @InputMap m_Wrapper;
             public DefaultActions(@InputMap wrapper) { m_Wrapper = wrapper; }
-            public InputAction @Click => m_Wrapper.m_Default_Click;
             public InputAction @ClickPosition => m_Wrapper.m_Default_ClickPosition;
+            public InputAction @Click => m_Wrapper.m_Default_Click;
             public InputActionMap Get() { return m_Wrapper.m_Default; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -197,22 +197,22 @@ namespace TestTankProject.UserInput
             {
                 if (instance == null || m_Wrapper.m_DefaultActionsCallbackInterfaces.Contains(instance)) return;
                 m_Wrapper.m_DefaultActionsCallbackInterfaces.Add(instance);
-                @Click.started += instance.OnClick;
-                @Click.performed += instance.OnClick;
-                @Click.canceled += instance.OnClick;
                 @ClickPosition.started += instance.OnClickPosition;
                 @ClickPosition.performed += instance.OnClickPosition;
                 @ClickPosition.canceled += instance.OnClickPosition;
+                @Click.started += instance.OnClick;
+                @Click.performed += instance.OnClick;
+                @Click.canceled += instance.OnClick;
             }
 
             private void UnregisterCallbacks(IDefaultActions instance)
             {
-                @Click.started -= instance.OnClick;
-                @Click.performed -= instance.OnClick;
-                @Click.canceled -= instance.OnClick;
                 @ClickPosition.started -= instance.OnClickPosition;
                 @ClickPosition.performed -= instance.OnClickPosition;
                 @ClickPosition.canceled -= instance.OnClickPosition;
+                @Click.started -= instance.OnClick;
+                @Click.performed -= instance.OnClick;
+                @Click.canceled -= instance.OnClick;
             }
 
             public void RemoveCallbacks(IDefaultActions instance)
@@ -241,8 +241,8 @@ namespace TestTankProject.UserInput
         }
         public interface IDefaultActions
         {
-            void OnClick(InputAction.CallbackContext context);
             void OnClickPosition(InputAction.CallbackContext context);
+            void OnClick(InputAction.CallbackContext context);
         }
     }
 }
