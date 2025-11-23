@@ -13,15 +13,48 @@ MonoBehaviour:
   m_Name: CardIconConfig_Default
   m_EditorClassIdentifier: 
   StartWithMe: 1
-  _cardIcons:
-  - {fileID: 21300000, guid: bbedec8145051b2459b4cd951cad8109, type: 3}
-  - {fileID: 21300000, guid: 8f56d723eaff14b40a4a40d31581994a, type: 3}
-  - {fileID: 21300000, guid: b15d0badcd670474f98d6a24c99920dd, type: 3}
-  - {fileID: 21300000, guid: c61324982ec57bc49a83097d21bbcdb3, type: 3}
-  - {fileID: 21300000, guid: db6567afdacc06b4e9a2ed1097ec0f8d, type: 3}
-  - {fileID: 21300000, guid: c90f4c1011842f44db86d1d4e6c8753c, type: 3}
-  - {fileID: 21300000, guid: 4f3960d4cdec2f64b97e7b86c7d1f3f0, type: 3}
-  - {fileID: 21300000, guid: f9dc317bc4e499244b59a06cf0ecbfd9, type: 3}
-  - {fileID: 21300000, guid: fbb600635bc35b64dbbb721997892f31, type: 3}
-  - {fileID: 21300000, guid: 540bfcf80b8d20d439f103548e267ccc, type: 3}
-  - {fileID: 21300000, guid: de57009265df2f146ba720cf61cd6a30, type: 3}
+  _iconReferences:
+  - m_AssetGUID: b15d0badcd670474f98d6a24c99920dd
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: 540bfcf80b8d20d439f103548e267ccc
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: c61324982ec57bc49a83097d21bbcdb3
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: c90f4c1011842f44db86d1d4e6c8753c
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: f9dc317bc4e499244b59a06cf0ecbfd9
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: bbedec8145051b2459b4cd951cad8109
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: db6567afdacc06b4e9a2ed1097ec0f8d
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: fbb600635bc35b64dbbb721997892f31
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: de57009265df2f146ba720cf61cd6a30
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: 4f3960d4cdec2f64b97e7b86c7d1f3f0
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: 8f56d723eaff14b40a4a40d31581994a
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0

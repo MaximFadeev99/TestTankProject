@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using TestTankProject.Runtime.Utilities;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace TestTankProject.Runtime.Gameplay.GameGeneration
 {
     internal class OrderedGameGeneration : GameGenerator
     {
-        protected override IReadOnlyList<CardModel> GenerateCards(Vector2Int fieldSize, IReadOnlyList<Sprite> icons)
+        protected override IReadOnlyList<CardModel> GenerateCards(Vector2Int fieldSize,  
+            IReadOnlyList<AssetReferenceSprite> iconReferences)
         {
             if (fieldSize.x * fieldSize.y % RuntimeConstants.MatchingCardCount != 0)
             {
@@ -34,9 +36,9 @@ namespace TestTankProject.Runtime.Gameplay.GameGeneration
                     continue;
                 
                 cards.Add(new CardModel(allAddresses[i - 1], allAddresses[i], 
-                    icons[iconIndex]));
+                    iconReferences[iconIndex]));
                 cards.Add(new CardModel(allAddresses[i], allAddresses[i - 1],
-                    icons[iconIndex]));
+                    iconReferences[iconIndex]));
                 iconIndex++;
             }
 

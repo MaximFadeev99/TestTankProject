@@ -1,13 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
+using BaseBuilding.Tests;
 using TestTankProject.Runtime.Utilities;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace TestTankProject.Runtime.Gameplay.GameGeneration
 {
     internal class RandomGameGenerator : GameGenerator
     {
-        protected override IReadOnlyList<CardModel> GenerateCards(Vector2Int fieldSize, IReadOnlyList<Sprite> icons)
+        protected override IReadOnlyList<CardModel> GenerateCards(Vector2Int fieldSize,
+            IReadOnlyList<AssetReferenceSprite> iconReferences)
         {
             if (fieldSize.x * fieldSize.y % RuntimeConstants.MatchingCardCount != 0)
             {
@@ -33,9 +36,9 @@ namespace TestTankProject.Runtime.Gameplay.GameGeneration
             {
                 int randomAddressIndex = Random.Range(1, allAddresses.Count);
                 cards.Add(new CardModel(allAddresses[0], allAddresses[randomAddressIndex], 
-                    icons[iconIndex]));
+                    iconReferences[iconIndex]));
                 cards.Add(new CardModel(allAddresses[randomAddressIndex], allAddresses[0],
-                    icons[iconIndex]));
+                    iconReferences[iconIndex]));
                 iconIndex++;
                 allAddresses.RemoveAt(randomAddressIndex);
                 allAddresses.RemoveAt(0);

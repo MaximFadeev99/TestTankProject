@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace TestTankProject.Runtime.Gameplay
 {
@@ -8,15 +9,15 @@ namespace TestTankProject.Runtime.Gameplay
     {
         internal readonly Vector2Int Address;
         internal readonly Vector2Int MatchingCardAddress;
-        internal readonly Sprite IconKey;
+        internal readonly AssetReferenceSprite IconReference;
 
         internal CardStatus Status;
 
-        public CardModel(Vector2Int address, Vector2Int matchingCardAddress, Sprite iconKey)
+        public CardModel(Vector2Int address, Vector2Int matchingCardAddress, AssetReferenceSprite iconReference)
         {
             Address = address;
             MatchingCardAddress = matchingCardAddress;
-            IconKey = iconKey;
+            IconReference = iconReference;
             Status = CardStatus.Unmatched;
         }
     }

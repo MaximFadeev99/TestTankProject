@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Serialization;
 
 namespace TestTankProject.Runtime.Gameplay
@@ -7,10 +8,10 @@ namespace TestTankProject.Runtime.Gameplay
     [CreateAssetMenu(fileName = "CardIconConfig_New", menuName = "TestTankProject/CardIconConfig", order = 51)]
     public class CardIconConfig : ScriptableObject
     {
-        [FormerlySerializedAs("ShallUseMe")] public bool StartWithMe;
+        public bool StartWithMe;
         
-        [SerializeField] private List<Sprite> _cardIcons;
+        [SerializeField] private List<AssetReferenceSprite> _iconReferences;
         
-        public IReadOnlyList<Sprite> CardIcons => _cardIcons;
+        public IReadOnlyList<AssetReferenceSprite> IconReferences => _iconReferences;
     }
 }

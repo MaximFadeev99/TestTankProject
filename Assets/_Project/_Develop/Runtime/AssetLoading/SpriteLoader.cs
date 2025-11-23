@@ -79,7 +79,9 @@ namespace BaseBuilding.Tests
         public void ReleaseAllDistributedSprites()
         {
             foreach (KeyValuePair<AssetReferenceSprite, int> kvp in _distributedSprites)
-                ReleaseSprite(kvp.Key);
+                kvp.Key.ReleaseAsset();
+            
+            _distributedSprites.Clear();
         }
 
         private async UniTask LoadAsset(AssetReferenceSprite spriteReference)

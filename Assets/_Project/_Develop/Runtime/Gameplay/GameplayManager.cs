@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using BaseBuilding.Tests;
 using Cysharp.Threading.Tasks;
 using MessagePipe;
 using TestTankProject.Runtime.Bootstrap;
@@ -17,6 +18,7 @@ namespace TestTankProject.Runtime.Gameplay
     {
         private readonly GameConfig _selectedGameConfig;
         private readonly CardIconConfig _selectedCardIconConfig;
+        public readonly SpriteLoader _spriteLoader;
         private readonly IGameGenerator _iGameGenerator;
         
         private readonly IPublisher<SetUpPlayingField> _setUpPlayingFieldPublisher;
@@ -29,6 +31,7 @@ namespace TestTankProject.Runtime.Gameplay
 
         public GameplayManager(IReadOnlyList<GameConfig> allRegisteredGameConfigs, 
             IReadOnlyList<CardIconConfig> allRegisteredCardIconConfigs,
+            SpriteLoader spriteLoader,
             IPublisher<SetUpPlayingField> setUpPlayingFieldPublisher,
             IPublisher<UpdateCard> updateCardPublisher,
             IPublisher<UpdateScoreboard> updateScoreboardPublisher,
@@ -59,6 +62,7 @@ namespace TestTankProject.Runtime.Gameplay
                     MessageTypes.Exception, RecipientTypes.GD ); 
             }
             
+            _spriteLoader = spriteLoader;
             _setUpPlayingFieldPublisher = setUpPlayingFieldPublisher;
             _updateCardPublisher = updateCardPublisher;
             _updateScoreboardPublisher = updateScoreboardPublisher;
@@ -71,13 +75,13 @@ namespace TestTankProject.Runtime.Gameplay
             _disposableForSubscriptions = bagBuilder.Build();
         }
 
-        public void StartGame()
+        public async void StartGame()
         {
-            IReadOnlyList<CardModel> cards = _iGameGenerator.GenerateGame(_selectedGameConfig.PlayingFieldSize, 
-                _selectedCardIconConfig.CardIcons, out IReadOnlyList<CardDataForView> cardsForView);
+            GameGenerationResult gameGenerationResult = await _iGameGenerator
+                .GenerateGame(_selectedGameConfig.PlayingFieldSize, _spriteLoader, _selectedCardIconConfig.IconReferences);
             _currentGame = new GameModel(_selectedGameConfig.InitialCardDemonstrationTime, 
                 _selectedGameConfig.CardDisappearDelay, _selectedGameConfig.PointsPerMatch, _selectedGameConfig.PointsPerMatchStreak,
-                cards, 0, 0,0,0);
+                gameGenerationResult.Cards, 0, 0,0,0);
             _gameQuitCts = new CancellationTokenSource();
             
             _currentGame.ShowCard += OnShowCardCommand;
@@ -87,7 +91,7 @@ namespace TestTankProject.Runtime.Gameplay
             _currentGame.GameCompleted += OnGameCompleted;
             
             _setUpPlayingFieldPublisher.Publish(new SetUpPlayingField(_selectedGameConfig.PlayingFieldSize, 
-                _selectedGameConfig.SpacingBetweenCards, cardsForView));
+                _selectedGameConfig.SpacingBetweenCards, gameGenerationResult.CardsForView));
             _updateScoreboardPublisher.Publish(new UpdateScoreboard(_currentGame.CurrentPoints, 
                 _currentGame.BonusPoints, _currentGame.CurrentMatches, _currentGame.TotalMatchAttempts));
         }
