@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6034090780722815502
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6034090780722815496}
+  - component: {fileID: 6034090780722815503}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6034090780722815496
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6034090780722815502}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.3784651, y: 0.117762804, z: -9.531501}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6034090780722815503
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6034090780722815502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d8da1d017985884fa2b8cc2dda636e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _audioMixer: {fileID: 24100000, guid: 948b51aba556fda4a8d2859d31c3b906, type: 2}
+  _defaultGroup: {fileID: 6773675290635934356, guid: 948b51aba556fda4a8d2859d31c3b906, type: 2}
+  _audioSourcePrefab: {fileID: 5931222177233543154, guid: 0f260009e6f04884cb1033b12b0bba5e, type: 3}
+  _audioClipDictionary:
+    _keyData: 01000000020000000300000004000000
+    _valueData:
+    - {fileID: 8300000, guid: a5fd679b5d1278a4d9894322ef8d1870, type: 3}
+    - {fileID: 8300000, guid: 9984c68b4c8b7994f998c893491f6aec, type: 3}
+    - {fileID: 8300000, guid: 5ed12c9f9da04b44892953c2f6941c88, type: 3}
+    - {fileID: 8300000, guid: 928bb3d5cd4cb1246ad9abb8483edc5a, type: 3}

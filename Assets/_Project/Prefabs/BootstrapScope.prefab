@@ -54,3 +54,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4e9bdec99991b2e408fbb605a7b48dca, type: 2}
   _registeredCardIconConfigs:
   - {fileID: 11400000, guid: 28c7840528b2a1c4f86c7f2fe55fa9cd, type: 2}
+  _audioManagerPrefab: {fileID: 6034090780722815503, guid: 7ebf7d0e38565014a87d63bb5d79b926, type: 3}

@@ -65,6 +65,9 @@ namespace TestTankProject.Runtime.Gameplay
                 return;
             }
             
+            if (SelectedCards[0] == targetCard)
+                return;
+            
             SelectedCards[1] = targetCard;
             ShowCard?.Invoke(targetCard.Address);
             TotalMatchAttempts++;

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using BaseBuilding.Tests;
 using MessagePipe;
+using TestTankProject.Runtime.Core.Sounds;
 using TestTankProject.Runtime.Gameplay;
 using TestTankProject.Runtime.PlayingField;
 using TestTankProject.Runtime.SaveLoad;
@@ -58,6 +59,7 @@ namespace TestTankProject.Runtime.Core
                     _objectResolver.Resolve<IPublisher<UpdateCard>>(),
                     _objectResolver.Resolve<IPublisher<UpdateScoreboard>>(),
                     _objectResolver.Resolve<IPublisher<DrawEndGamePanel>>(),
+                    _objectResolver.Resolve<IPublisher<PlaySoundCommand>>(),
                     _objectResolver.Resolve<ISubscriber<CardClickedEvent>>(),
                     _objectResolver.Resolve<ISubscriber<PlayingFieldSetUpEvent>>(),
                     _objectResolver.Resolve<IGameSaver>(),

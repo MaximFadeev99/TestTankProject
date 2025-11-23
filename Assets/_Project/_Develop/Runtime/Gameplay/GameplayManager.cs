@@ -5,7 +5,9 @@ using System.Threading;
 using BaseBuilding.Tests;
 using Cysharp.Threading.Tasks;
 using MessagePipe;
+using TestTankProject.Runtime._Project._Develop.Runtime.Sounds;
 using TestTankProject.Runtime.Bootstrap;
+using TestTankProject.Runtime.Core.Sounds;
 using TestTankProject.Runtime.Gameplay.GameGeneration;
 using TestTankProject.Runtime.PlayingField;
 using TestTankProject.Runtime.SaveLoad;
@@ -30,6 +32,7 @@ namespace TestTankProject.Runtime.Gameplay
         private readonly IPublisher<UpdateCard> _updateCardPublisher;
         private readonly IPublisher<UpdateScoreboard> _updateScoreboardPublisher;
         private readonly IPublisher<DrawEndGamePanel> _drawEndGamePanelPublisher;
+        private readonly IPublisher<PlaySoundCommand> _playSoundPublisher;
         private readonly IDisposable _disposableForSubscriptions;
 
         private CancellationTokenSource _gameQuitCts;
@@ -42,6 +45,7 @@ namespace TestTankProject.Runtime.Gameplay
             IPublisher<UpdateCard> updateCardPublisher,
             IPublisher<UpdateScoreboard> updateScoreboardPublisher,
             IPublisher<DrawEndGamePanel> drawnEndGamePanelPublisher,
+            IPublisher<PlaySoundCommand> playSoundPublisher,
             ISubscriber<CardClickedEvent> cardClickedSubscriber,
             ISubscriber<PlayingFieldSetUpEvent> playingFieldSetUpSubscriber,
             IGameSaver gameSaver,
@@ -76,6 +80,7 @@ namespace TestTankProject.Runtime.Gameplay
             _updateCardPublisher = updateCardPublisher;
             _updateScoreboardPublisher = updateScoreboardPublisher;
             _drawEndGamePanelPublisher = drawnEndGamePanelPublisher;
+            _playSoundPublisher = playSoundPublisher;
             _gameGenerator = _selectedGameConfig.ShallShuffleCards ? 
                 new RandomGameGenerator() : new OrderedGameGeneration();
             _cardsForViewGenerator = new(_spriteLoader);
@@ -139,10 +144,11 @@ namespace TestTankProject.Runtime.Gameplay
                 if (card.Status != CardStatus.Unmatched)
                     continue;
                 
+                _playSoundPublisher.Publish(new PlaySoundCommand(SoundTypes.CardFlips));
                 _updateCardPublisher.Publish(new UpdateCard(card.Address, CardActions.RaiseCover));
                 await UniTask.WaitForSeconds(0.2f, cancellationToken: _gameQuitCts.Token)
                     .SuppressCancellationThrow();
-
+                
                 if (_gameQuitCts.IsCancellationRequested)
                     return;
             }
@@ -183,6 +189,7 @@ namespace TestTankProject.Runtime.Gameplay
             
             _updateCardPublisher.Publish(new(cardAddress1, CardActions.Remove));
             _updateCardPublisher.Publish(new(cardAddress2, CardActions.Remove));
+            _playSoundPublisher.Publish(new PlaySoundCommand(SoundTypes.CardsMatch));
         }
 
         private async void OnCardsMismatched(Vector2Int cardAddress1, Vector2Int cardAddress2)
@@ -191,11 +198,13 @@ namespace TestTankProject.Runtime.Gameplay
             
             _updateCardPublisher.Publish(new(cardAddress1, CardActions.PutDownCover));
             _updateCardPublisher.Publish(new(cardAddress2, CardActions.PutDownCover));
+            _playSoundPublisher.Publish(new PlaySoundCommand(SoundTypes.CardsMismatch));
         }
 
         private void OnShowCardCommand(Vector2Int cardAddress)
         {
             _updateCardPublisher.Publish(new(cardAddress, CardActions.RaiseCover));
+            _playSoundPublisher.Publish(new PlaySoundCommand(SoundTypes.CardFlips));
         }
 
         private void OnTurnCompleted()
@@ -204,11 +213,15 @@ namespace TestTankProject.Runtime.Gameplay
                 _currentGame.BonusPoints, _currentGame.CurrentMatches, _currentGame.TotalMatchAttempts));
         }
 
-        private void OnGameCompleted()
+        private async void OnGameCompleted()
         {
             Dispose();
             _gameSaver.DeleteSavedGame();
+
+            await UniTask.WaitForSeconds(2.5f);
+            
             _drawEndGamePanelPublisher.Publish(new DrawEndGamePanel("Victory!"));
+            _playSoundPublisher.Publish(new PlaySoundCommand(SoundTypes.GameWon));
         }
 
         private void Dispose()

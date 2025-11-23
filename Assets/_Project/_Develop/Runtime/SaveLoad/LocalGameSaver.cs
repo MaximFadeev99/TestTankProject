@@ -24,7 +24,6 @@ namespace TestTankProject.Runtime.SaveLoad
                 jString = stringWriter.ToString();
             }
             
-            Debug.Log(jString);
             PlayerPrefs.SetString(RuntimeConstants.SavedGameKey, jString);    
         }
 

@@ -3,11 +3,13 @@ using BaseBuilding.Tests;
 using MessagePipe;
 using Newtonsoft.Json;
 using TestTankProject.Runtime.Core.SaveLoad;
+using TestTankProject.Runtime.Core.Sounds;
 using TestTankProject.Runtime.Gameplay;
 using TestTankProject.Runtime.MainMenu;
 using TestTankProject.Runtime.PlayingField;
 using TestTankProject.Runtime.SaveLoad;
 using TestTankProject.Runtime.SceneLoading;
+using TestTankProject.Runtime.Sounds;
 using TestTankProject.Runtime.UI.EndGamePanel;
 using TestTankProject.Runtime.UI.EndGamePanel.Commands;
 using TestTankProject.Runtime.UI.MainMenu;
@@ -23,9 +25,12 @@ namespace TestTankProject.Runtime.Bootstrap
     {
         [SerializeField] private List<GameConfig> _registeredGameConfigs;
         [SerializeField] private List<CardIconConfig> _registeredCardIconConfigs;
+        [SerializeField] private AudioManager _audioManagerPrefab;
         
         protected override void Configure(IContainerBuilder builder)
         {
+            Instantiate(_audioManagerPrefab);
+            
             MessagePipeOptions options = builder.RegisterMessagePipe();
             RegisterMessageBrokers(builder, options);
             RegisterJsonSerializer(builder);
@@ -39,6 +44,7 @@ namespace TestTankProject.Runtime.Bootstrap
             builder.Register<SpriteLoader>(Lifetime.Singleton);
             builder.Register<LocalGameSaver>(Lifetime.Singleton).As<IGameSaver>();
             builder.Register<LocalGameLoader>(Lifetime.Singleton).As<IGameLoader>();
+            builder.Register<AudioManager>(Lifetime.Singleton);
                 
             builder.RegisterEntryPoint<BootstrapFlow>();
         }
@@ -55,6 +61,7 @@ namespace TestTankProject.Runtime.Bootstrap
             builder.RegisterMessageBroker<UpdateScoreboard>(messagePipeOptions);
             builder.RegisterMessageBroker<ReturnButtonPressedEvent>(messagePipeOptions);
             builder.RegisterMessageBroker<DrawEndGamePanel>(messagePipeOptions);
+            builder.RegisterMessageBroker<PlaySoundCommand>(messagePipeOptions);
         }
 
         private void RegisterJsonSerializer(IContainerBuilder builder)
