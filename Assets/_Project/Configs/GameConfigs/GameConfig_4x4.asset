@@ -17,6 +17,6 @@ MonoBehaviour:
   SpacingBetweenCards: 0.5
   InitialCardDemonstrationTime: 3
   CardDisappearDelay: 1.1
-  ShallShuffleCards: 0
+  ShallShuffleCards: 1
   PointsPerMatch: 10
   PointsPerMatchStreak: 5

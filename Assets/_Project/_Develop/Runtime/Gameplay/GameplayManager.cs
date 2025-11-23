@@ -60,7 +60,8 @@ namespace TestTankProject.Runtime.Gameplay
             _setUpPlayingFieldPublisher = setUpPlayingFieldPublisher;
             _updateCardPublisher = updateCardPublisher;
             _updateScoreboardPublisher = updateScoreboardPublisher;
-            _iGameGenerator = _selectedGameConfig.ShallShuffleCards ? null : new OrderedGameGeneration();
+            _iGameGenerator = _selectedGameConfig.ShallShuffleCards ? 
+                new RandomGameGenerator() : new OrderedGameGeneration();
             
             DisposableBagBuilder bagBuilder = DisposableBag.CreateBuilder();
             cardClickedSubscriber.Subscribe(OnCardClickedEvent).AddTo(bagBuilder);
