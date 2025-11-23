@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: GameConfig_4x4
   m_EditorClassIdentifier: 
   StartGameWithMe: 1
-  PlayingFieldSize: {x: 4, y: 4}
+  PlayingFieldSize: {x: 10, y: 6}
   SpacingBetweenCards: 0.5
   InitialCardDemonstrationTime: 0
   CardDisappearDelay: 1.1
-  ShallShuffleCards: 0
+  ShallShuffleCards: 1
   PointsPerMatch: 10
   PointsPerMatchStreak: 5

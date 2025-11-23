@@ -61,6 +61,90 @@ MonoBehaviour:
     m_Address: CardIcon_building
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: b6b893cdda6ade343af3fa35d609f70d
+    m_Address: CardIcon_Additional6
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 8a7812410064a0c429b30a07740efaee
+    m_Address: CardIcon_Additional5
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d8b0db59e750f3d4db1aa11124ddf081
+    m_Address: CardIcon_Additional12
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 6a0f5285912a95d449345ae6f764189a
+    m_Address: CardIcon_Additional7
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 77e2a9167ed2b3d45825b61547cbfc82
+    m_Address: CardIcon_Additional10
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e167a0f2b4fa71240baead07d12e6f38
+    m_Address: CardIcon_Additional2
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 7640b4eedcd1afe4ab8668e24c37905c
+    m_Address: CardIcon_Additional11
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 6d451651dc0ec994eb38bd9011355d5a
+    m_Address: CardIcon_Additional17
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 5365db391eb9de64a8cfc9add2919784
+    m_Address: CardIcon_Additional19
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 0a35625fe02bd1d4397e44bca9725082
+    m_Address: CardIcon_Additional15
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 8b4b5830a87567049b30902bed64f1eb
+    m_Address: CardIcon_Additional16
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a66351214a83eef4aae4df99fff9ea4b
+    m_Address: CardIcon_Additional3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 757864aa923adeb409fc4db50fe1938a
+    m_Address: CardIcon_Additional8
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 5c9c0999602faa1459041e88e8556c17
+    m_Address: CardIcon_Additional20
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 823fb1af7a28e8a45a98f032323ba976
+    m_Address: CardIcon_Additional9
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 718c1ee9628240a4d8a837c67830c755
+    m_Address: CardIcon_Additional13
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 1aeafd521d1c56143885ed05d2bf1934
+    m_Address: CardIcon_Additional18
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e53004e9a17938643b4cdc258c1d91d5
+    m_Address: CardIcon_Additional4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 325ba1dd14369b9418942ec51e7a0d33
+    m_Address: CardIcon_Additional21
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 3f24e215d06040d4e8cecfc84331cfec
+    m_Address: CardIcon_Additional1
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 30350c8e744912242bbeea1d44c2379a
+    m_Address: CardIcon_Additional14
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: a1bdfbafaf9f8834cb4a809419490ac7, type: 2}
   m_SchemaSet:
