@@ -329,3 +329,4 @@ MonoBehaviour:
   _background: {fileID: 5549372478799953004}
   _icon: {fileID: 9190296471515037119}
   _coverTransform: {fileID: 128436902025728030}
+  _coverCollider: {fileID: 8786597133497278728}

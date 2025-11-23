@@ -14,16 +14,17 @@ namespace TestTankProject.Runtime.Gameplay
 
         internal CardStatus Status;
 
-        public CardModel(Vector2Int address, Vector2Int matchingCardAddress, AssetReferenceSprite iconReference)
+        public CardModel(Vector2Int address, Vector2Int matchingCardAddress, 
+            AssetReferenceSprite iconReference, CardStatus status = CardStatus.Unmatched)
         {
             Address = address;
             MatchingCardAddress = matchingCardAddress;
             IconReference = iconReference;
-            Status = CardStatus.Unmatched;
+            Status = status;
         }
     }
 
-    internal enum CardStatus
+    public enum CardStatus
     {
         Undefined = 0,
         Unmatched,

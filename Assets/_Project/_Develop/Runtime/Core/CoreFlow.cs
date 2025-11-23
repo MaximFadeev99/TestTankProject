@@ -4,8 +4,10 @@ using BaseBuilding.Tests;
 using MessagePipe;
 using TestTankProject.Runtime.Gameplay;
 using TestTankProject.Runtime.PlayingField;
+using TestTankProject.Runtime.SaveLoad;
 using TestTankProject.Runtime.SceneLoading;
 using TestTankProject.Runtime.UI.EndGamePanel;
+using TestTankProject.Runtime.UI.EndGamePanel.Commands;
 using TestTankProject.Runtime.UI.Scoreboard;
 using TestTankProject.Runtime.UserInput;
 using UnityEngine;
@@ -44,7 +46,6 @@ namespace TestTankProject.Runtime.Core
 
         public void Start()
         {
-            Debug.Log("Called start on CoreFlow");
             _sceneLoader.MoveObjectToScene(_mainCamera.gameObject, ProjectScenes.Core);
             _sceneCanvas.worldCamera = _mainCamera;
             _sceneCanvas.planeDistance = 5f;
@@ -56,8 +57,11 @@ namespace TestTankProject.Runtime.Core
                     _objectResolver.Resolve<IPublisher<SetUpPlayingField>>(),
                     _objectResolver.Resolve<IPublisher<UpdateCard>>(),
                     _objectResolver.Resolve<IPublisher<UpdateScoreboard>>(),
+                    _objectResolver.Resolve<IPublisher<DrawEndGamePanel>>(),
                     _objectResolver.Resolve<ISubscriber<CardClickedEvent>>(),
-                    _objectResolver.Resolve<ISubscriber<PlayingFieldSetUpEvent>>());
+                    _objectResolver.Resolve<ISubscriber<PlayingFieldSetUpEvent>>(),
+                    _objectResolver.Resolve<IGameSaver>(),
+                    _objectResolver.Resolve<IGameLoader>());
             _gameplayManager.StartGame();
         }
 

@@ -8,7 +8,7 @@ namespace TestTankProject.Runtime.Gameplay.GameGeneration
 {
     public interface IGameGenerator
     {
-        public UniTask<GameGenerationResult> GenerateGame(Vector2Int fieldSize, SpriteLoader spriteLoader,
+        public IReadOnlyList<CardModel> GenerateGame(Vector2Int fieldSize,
             IReadOnlyList<AssetReferenceSprite> iconReferences);
     }
 }

@@ -12,6 +12,7 @@ namespace TestTankProject.Runtime.PlayingField
         [SerializeField] private SpriteRenderer _background;
         [SerializeField] private SpriteRenderer _icon;
         [SerializeField] private Transform _coverTransform;
+        [SerializeField] private BoxCollider2D _coverCollider;
         
         private GameObject _gameObject;
         private Transform _transform;
@@ -46,38 +47,52 @@ namespace TestTankProject.Runtime.PlayingField
         {
             _putDownCoverTween?.Kill(false);
 
-            if (_raiseCoverTween != null)
+            if (_gameObject.activeSelf == false || _raiseCoverTween != null)
                 return;
             
             _raiseCoverTween = _coverTransform
                 .DOScale(Vector3.zero, AnimDuratiton)
                 .SetEase(Ease.InBack)
-                .OnComplete(() => _raiseCoverTween = null);
+                .OnComplete(() =>
+                {
+                    _raiseCoverTween = null;
+                    _coverCollider.enabled = false;
+                });
         }
 
         internal void PutDownCover()
         {
             _raiseCoverTween?.Kill();
 
-            if (_putDownCoverTween != null)
+            if (_gameObject.activeSelf == false || _putDownCoverTween != null)
                 return;
             
             _putDownCoverTween = _coverTransform
                 .DOScale(_initialCoverTransformScale, AnimDuratiton)
                 .SetEase(Ease.OutBack)
-                .OnComplete(() => _putDownCoverTween = null);
+                .OnComplete(() =>
+                {
+                    _putDownCoverTween = null;
+                    _coverCollider.enabled = true;
+                });
         }
 
-        internal async void Remove()
+        internal async void Remove(bool shallPlayAnimation = true)
         {
-            _coverTransform.DOKill();
-            _coverTransform.gameObject.SetActive(false);
-            await _transform.DOScale(Vector3.zero, AnimDuratiton).SetEase(Ease.InBack);
+            if (shallPlayAnimation)
+            {
+                _coverTransform.DOKill();
+                _coverTransform.gameObject.SetActive(false);
+                await _transform.DOScale(Vector3.zero, AnimDuratiton).SetEase(Ease.InBack);
+            }
+            
             _gameObject.SetActive(false);
+            _coverCollider.enabled = false;
         }
 
         internal void OnHitByRaycast()
         {
+            //_coverCollider.enabled = false;
             Pressed?.Invoke(Address);
         }
 

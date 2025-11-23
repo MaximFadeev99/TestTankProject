@@ -6,6 +6,7 @@ using TestTankProject.Runtime.Core.SaveLoad;
 using TestTankProject.Runtime.Gameplay;
 using TestTankProject.Runtime.MainMenu;
 using TestTankProject.Runtime.PlayingField;
+using TestTankProject.Runtime.SaveLoad;
 using TestTankProject.Runtime.SceneLoading;
 using TestTankProject.Runtime.UI.EndGamePanel;
 using TestTankProject.Runtime.UI.EndGamePanel.Commands;
@@ -36,7 +37,8 @@ namespace TestTankProject.Runtime.Bootstrap
             builder.Register<InputLogger>(Lifetime.Singleton);
             builder.Register<Raycaster>(Lifetime.Singleton);
             builder.Register<SpriteLoader>(Lifetime.Singleton);
-            
+            builder.Register<LocalGameSaver>(Lifetime.Singleton).As<IGameSaver>();
+            builder.Register<LocalGameLoader>(Lifetime.Singleton).As<IGameLoader>();
                 
             builder.RegisterEntryPoint<BootstrapFlow>();
         }

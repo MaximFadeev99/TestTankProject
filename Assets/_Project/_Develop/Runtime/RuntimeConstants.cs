@@ -5,6 +5,7 @@ namespace TestTankProject.Runtime
     public static class RuntimeConstants
     {
         public const int MatchingCardCount = 2;
+        public const string SavedGameKey = "SavedGame";
         public static int CardsLayerMask = LayerMask.GetMask("Cards");
 
         public static class SerializationConstants

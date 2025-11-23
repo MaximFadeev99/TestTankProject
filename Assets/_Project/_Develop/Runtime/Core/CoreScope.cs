@@ -15,8 +15,8 @@ namespace TestTankProject.Runtime.Core
             builder.RegisterInstance(_sceneCanvas);
             builder.RegisterEntryPoint<CoreFlow>(Lifetime.Scoped);
         }
-        
-        private void OnDestroy()
+
+        protected override void OnDestroy()
         {
             Container.Dispose();
         }

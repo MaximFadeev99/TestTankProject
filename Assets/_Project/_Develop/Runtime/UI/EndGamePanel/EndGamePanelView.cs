@@ -20,7 +20,8 @@ namespace TestTankProject.Runtime.UI.EndGamePanel
         
         [Inject]
         private void Initialize(ISubscriber<DrawEndGamePanel> drawCommandSubscriber, 
-            IPublisher<ReturnButtonPressedEvent> returnPressedPublisher)
+            IPublisher<ReturnButtonPressedEvent> returnPressedPublisher,
+            ISubscriber<ReturnButtonPressedEvent> returnPressedSubscriber)
         {
             _gameObject = gameObject;
             _returnPressedPublisher = returnPressedPublisher;
@@ -28,12 +29,17 @@ namespace TestTankProject.Runtime.UI.EndGamePanel
             
             DisposableBagBuilder bagBuilder = DisposableBag.CreateBuilder();
             drawCommandSubscriber.Subscribe(OnDrawCommand).AddTo(bagBuilder);
+            returnPressedSubscriber.Subscribe(OnReturnPressedEvent).AddTo(bagBuilder);
             _disposableForSubscriptions = bagBuilder.Build();
         }
 
         private void OnDrawCommand(DrawEndGamePanel drawCommand)
         {
             _captionField.text = drawCommand.Caption;
+            
+            if (_gameObject == null)
+                return;
+            
             _gameObject.SetActive(true);
         }
 
@@ -41,6 +47,12 @@ namespace TestTankProject.Runtime.UI.EndGamePanel
         {
             _returnPressedPublisher.Publish(new ReturnButtonPressedEvent());
             _gameObject.SetActive(false);
+        }
+
+        private void OnReturnPressedEvent(ReturnButtonPressedEvent _)
+        {
+            Destroy(_gameObject);
+            OnDestroy();
         }
 
         private void OnDestroy()

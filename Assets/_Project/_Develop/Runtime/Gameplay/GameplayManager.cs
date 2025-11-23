@@ -8,6 +8,8 @@ using MessagePipe;
 using TestTankProject.Runtime.Bootstrap;
 using TestTankProject.Runtime.Gameplay.GameGeneration;
 using TestTankProject.Runtime.PlayingField;
+using TestTankProject.Runtime.SaveLoad;
+using TestTankProject.Runtime.UI.EndGamePanel.Commands;
 using TestTankProject.Runtime.UI.Scoreboard;
 using TestTankProject.Runtime.Utilities;
 using UnityEngine;
@@ -18,12 +20,16 @@ namespace TestTankProject.Runtime.Gameplay
     {
         private readonly GameConfig _selectedGameConfig;
         private readonly CardIconConfig _selectedCardIconConfig;
-        public readonly SpriteLoader _spriteLoader;
-        private readonly IGameGenerator _iGameGenerator;
+        private readonly SpriteLoader _spriteLoader;
+        private readonly CardsForViewGenerator _cardsForViewGenerator;
+        private readonly IGameGenerator _gameGenerator;
+        private readonly IGameSaver _gameSaver;
+        private readonly IGameLoader _gameLoader;
         
         private readonly IPublisher<SetUpPlayingField> _setUpPlayingFieldPublisher;
         private readonly IPublisher<UpdateCard> _updateCardPublisher;
         private readonly IPublisher<UpdateScoreboard> _updateScoreboardPublisher;
+        private readonly IPublisher<DrawEndGamePanel> _drawEndGamePanelPublisher;
         private readonly IDisposable _disposableForSubscriptions;
 
         private CancellationTokenSource _gameQuitCts;
@@ -35,8 +41,11 @@ namespace TestTankProject.Runtime.Gameplay
             IPublisher<SetUpPlayingField> setUpPlayingFieldPublisher,
             IPublisher<UpdateCard> updateCardPublisher,
             IPublisher<UpdateScoreboard> updateScoreboardPublisher,
+            IPublisher<DrawEndGamePanel> drawnEndGamePanelPublisher,
             ISubscriber<CardClickedEvent> cardClickedSubscriber,
-            ISubscriber<PlayingFieldSetUpEvent> playingFieldSetUpSubscriber)
+            ISubscriber<PlayingFieldSetUpEvent> playingFieldSetUpSubscriber,
+            IGameSaver gameSaver,
+            IGameLoader gameLoader)
         {
             try
             {
@@ -66,8 +75,12 @@ namespace TestTankProject.Runtime.Gameplay
             _setUpPlayingFieldPublisher = setUpPlayingFieldPublisher;
             _updateCardPublisher = updateCardPublisher;
             _updateScoreboardPublisher = updateScoreboardPublisher;
-            _iGameGenerator = _selectedGameConfig.ShallShuffleCards ? 
+            _drawEndGamePanelPublisher = drawnEndGamePanelPublisher;
+            _gameGenerator = _selectedGameConfig.ShallShuffleCards ? 
                 new RandomGameGenerator() : new OrderedGameGeneration();
+            _cardsForViewGenerator = new(_spriteLoader);
+            _gameSaver = gameSaver;
+            _gameLoader = gameLoader;
             
             DisposableBagBuilder bagBuilder = DisposableBag.CreateBuilder();
             cardClickedSubscriber.Subscribe(OnCardClickedEvent).AddTo(bagBuilder);
@@ -77,11 +90,19 @@ namespace TestTankProject.Runtime.Gameplay
 
         public async void StartGame()
         {
-            GameGenerationResult gameGenerationResult = await _iGameGenerator
-                .GenerateGame(_selectedGameConfig.PlayingFieldSize, _spriteLoader, _selectedCardIconConfig.IconReferences);
-            _currentGame = new GameModel(_selectedGameConfig.InitialCardDemonstrationTime, 
-                _selectedGameConfig.CardDisappearDelay, _selectedGameConfig.PointsPerMatch, _selectedGameConfig.PointsPerMatchStreak,
-                gameGenerationResult.Cards, 0, 0,0,0);
+            _currentGame = _gameLoader.LoadSavedGame();
+
+            if (_currentGame == null)
+            {
+                IReadOnlyList<CardModel> newCards = _gameGenerator
+                    .GenerateGame(_selectedGameConfig.PlayingFieldSize, _selectedCardIconConfig.IconReferences);
+                _currentGame = new GameModel(_selectedGameConfig.InitialCardDemonstrationTime, 
+                    _selectedGameConfig.CardDisappearDelay, _selectedGameConfig.PointsPerMatch, _selectedGameConfig.PointsPerMatchStreak,
+                    newCards, 0, 0,0,0);
+            }
+
+            IReadOnlyList<CardDataForView> cardDataForViews = 
+                await _cardsForViewGenerator.Generate(_currentGame.Cards);
             _gameQuitCts = new CancellationTokenSource();
             
             _currentGame.ShowCard += OnShowCardCommand;
@@ -91,13 +112,20 @@ namespace TestTankProject.Runtime.Gameplay
             _currentGame.GameCompleted += OnGameCompleted;
             
             _setUpPlayingFieldPublisher.Publish(new SetUpPlayingField(_selectedGameConfig.PlayingFieldSize, 
-                _selectedGameConfig.SpacingBetweenCards, gameGenerationResult.CardsForView));
+                _selectedGameConfig.SpacingBetweenCards, cardDataForViews));
             _updateScoreboardPublisher.Publish(new UpdateScoreboard(_currentGame.CurrentPoints, 
                 _currentGame.BonusPoints, _currentGame.CurrentMatches, _currentGame.TotalMatchAttempts));
         }
 
         public void SaveGame()
         {
+            if (_currentGame != null && 
+                (_currentGame.Status != GameStatus.Completed || 
+                 _currentGame.Status != GameStatus.Undefined))
+            {
+                _gameSaver.SaveGame(_currentGame);
+            }
+
             Dispose();
         }
 
@@ -108,6 +136,9 @@ namespace TestTankProject.Runtime.Gameplay
             
             foreach (CardModel card in _currentGame.Cards)
             {
+                if (card.Status != CardStatus.Unmatched)
+                    continue;
+                
                 _updateCardPublisher.Publish(new UpdateCard(card.Address, CardActions.RaiseCover));
                 await UniTask.WaitForSeconds(0.2f, cancellationToken: _gameQuitCts.Token)
                     .SuppressCancellationThrow();
@@ -124,6 +155,9 @@ namespace TestTankProject.Runtime.Gameplay
             
             foreach (CardModel card in _currentGame.Cards)
             {
+                if (card.Status != CardStatus.Unmatched)
+                    continue;
+                
                 _updateCardPublisher.Publish(new UpdateCard(card.Address, CardActions.PutDownCover));
                 await UniTask.WaitForSeconds(0.2f, cancellationToken: _gameQuitCts.Token)
                     .SuppressCancellationThrow();;
@@ -173,13 +207,18 @@ namespace TestTankProject.Runtime.Gameplay
         private void OnGameCompleted()
         {
             Dispose();
-            Debug.Log("Game Completed!");
+            _gameSaver.DeleteSavedGame();
+            _drawEndGamePanelPublisher.Publish(new DrawEndGamePanel("Victory!"));
         }
 
         private void Dispose()
         {
             _disposableForSubscriptions?.Dispose();
             _gameQuitCts?.Cancel();
+            
+            if (_currentGame == null)
+                return;
+            
             _currentGame.ShowCard -= OnShowCardCommand;
             _currentGame.TurnCompleted -= OnTurnCompleted;
             _currentGame.CardsMatched -= OnCardsMatched;

@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using TestTankProject.Runtime.Gameplay;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.UIElements;
 using SerializationConstants = TestTankProject.Runtime.RuntimeConstants.SerializationConstants;
 
 namespace TestTankProject.Runtime.Core.SaveLoad
@@ -34,8 +35,9 @@ namespace TestTankProject.Runtime.Core.SaveLoad
             Vector2Int matchingCardAddress = serializer.Deserialize<Vector2Int>
                 (jObject[SerializationConstants.MatchingCardAddress].CreateReader());
             AssetReferenceSprite iconReference = new(jObject[SerializationConstants.IconReference].ToString());
+            CardStatus status = jObject[SerializationConstants.Status].ToObject<CardStatus>();
             
-            return new(address, matchingCardAddress, iconReference);
+            return new(address, matchingCardAddress, iconReference, status);
         }
 
         private void WriteNestedBody(JsonWriter writer, CardModel value, JsonSerializer serializer)
@@ -46,6 +48,8 @@ namespace TestTankProject.Runtime.Core.SaveLoad
             serializer.Serialize(writer, value.MatchingCardAddress);
             writer.WritePropertyName(SerializationConstants.IconReference);
             writer.WriteValue(value.IconReference.AssetGUID);
+            writer.WritePropertyName(SerializationConstants.Status);
+            writer.WriteValue(value.Status);
         }
     }
 }

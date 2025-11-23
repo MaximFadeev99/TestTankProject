@@ -68,6 +68,10 @@ namespace TestTankProject.Runtime.PlayingField
                     
                     newCard.SetLocalPosition(new Vector2(xLocalPosition, yLocalPosition));
                     newCard.Pressed += OnCardPressed;
+                    
+                    if (setUpCommand.CardData[_createdCards.Count].IsVisible == false)
+                        newCard.Remove(false);
+                    
                     _createdCards.Add(newCard);
                 }
             }
