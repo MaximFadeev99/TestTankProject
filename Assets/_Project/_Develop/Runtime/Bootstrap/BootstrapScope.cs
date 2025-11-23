@@ -5,6 +5,7 @@ using TestTankProject.Runtime.MainMenu;
 using TestTankProject.Runtime.PlayingField;
 using TestTankProject.Runtime.SceneLoading;
 using TestTankProject.Runtime.UI.MainMenu;
+using TestTankProject.Runtime.UI.Scoreboard;
 using TestTankProject.Runtime.UserInput;
 using UnityEngine;
 using VContainer;
@@ -40,6 +41,7 @@ namespace TestTankProject.Runtime.Bootstrap
             builder.RegisterMessageBroker<UserClickRegisteredEvent>(messagePipeOptions);
             builder.RegisterMessageBroker<UpdateCard>(messagePipeOptions);
             builder.RegisterMessageBroker<PlayingFieldSetUpEvent>(messagePipeOptions);
+            builder.RegisterMessageBroker<UpdateScoreboard>(messagePipeOptions);
         }
     }
 }

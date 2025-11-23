@@ -12,9 +12,14 @@ namespace TestTankProject.Runtime.Gameplay
         internal readonly IReadOnlyList<CardModel> Cards;
         internal readonly int RequiredMatches;
         internal readonly CardModel[] SelectedCards;
+        internal readonly int PointsPerMatch;
+        internal readonly int PointsPerMatchStreak;
 
         internal GameStatus Status;
-        
+
+        internal int CurrentPoints { get; private set; }
+        internal int CurrentMatchStreak { get; private set; }
+        internal int BonusPoints => CurrentMatchStreak * PointsPerMatchStreak;
         internal int CurrentMatches { get; private set; }
         internal int TotalMatchAttempts { get; private set; }
 
@@ -24,12 +29,20 @@ namespace TestTankProject.Runtime.Gameplay
         internal event Action TurnCompleted;
         internal event Action GameCompleted;
         
-        public GameModel(float initialCardShowTime, float cardDisappearDelay,
-            IReadOnlyList<CardModel> cards)
+        public GameModel(float initialCardShowTime, float cardDisappearDelay, int pointsPerMatch, 
+            int pointsPerMatchStreak, IReadOnlyList<CardModel> cards, int currentPoints, int currentMatchStreak,
+            int currentMatches, int totalMatchAttempts)
         {
             InitialCardShowTime = initialCardShowTime;
             CardDisappearDelay = cardDisappearDelay;
+            PointsPerMatch = pointsPerMatch;
+            PointsPerMatchStreak = pointsPerMatchStreak;
             Cards = cards;
+            CurrentPoints = currentPoints;
+            CurrentMatchStreak = currentMatchStreak;
+            CurrentMatches = currentMatches;
+            TotalMatchAttempts = totalMatchAttempts;
+            
             RequiredMatches = cards.Count / RuntimeConstants.MatchingCardCount;
             SelectedCards = new CardModel[RuntimeConstants.MatchingCardCount];
             Status = GameStatus.BeingInitialized;
@@ -59,12 +72,15 @@ namespace TestTankProject.Runtime.Gameplay
             if (isMatch)
             {
                 CurrentMatches++;
+                CurrentPoints += PointsPerMatch + BonusPoints;
+                CurrentMatchStreak++;
                 SelectedCards[0].Status = CardStatus.Matched;
                 SelectedCards[1].Status = CardStatus.Matched;
                 CardsMatched?.Invoke(SelectedCards[0].Address, SelectedCards[1].Address);
             }
             else
             {
+                CurrentMatchStreak = 0;
                 CardsMismatched?.Invoke(SelectedCards[0].Address, SelectedCards[1].Address);
             }
 

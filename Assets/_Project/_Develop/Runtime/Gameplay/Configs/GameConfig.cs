@@ -14,6 +14,8 @@ namespace TestTankProject.Runtime.Gameplay
         public float InitialCardDemonstrationTime = 3f;
         public float CardDisappearDelay = 1.1f;
         public bool ShallShuffleCards = true;
+        public int PointsPerMatch = 10;
+        public int PointsPerMatchStreak = 5;
 
         private void OnValidate()
         {

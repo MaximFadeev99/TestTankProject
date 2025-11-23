@@ -68,28 +68,6 @@ namespace TestTankProject.Runtime.Gameplay.GameGeneration
             }
             
             return cardsForView;
-            /*List<CardDataForView> cardData = new List<CardDataForView>();
-
-            int iconIndex = 0;
-            int iconUseCount = 0;
-
-            for (int i = 0; i < fieldSize.x; i++)
-            {
-                for (int j = 0; j < fieldSize.y; j++)
-                {
-                    cardData.Add(new CardDataForView(new Vector2Int(i, j),
-                        icons[iconIndex]));
-                    iconUseCount++;
-
-                    if (iconUseCount != RuntimeConstants.MatchingCardCount)
-                        continue;
-
-                    iconUseCount = 0;
-                    iconIndex++;
-                }
-            }
-
-            return cardData;*/
         }
     }
 }

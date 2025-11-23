@@ -14,7 +14,6 @@ namespace TestTankProject.Runtime.UI.MainMenu
         private readonly List<MainMenuButton> _createdButtons = new();
 
         private Transform _transform;
-        private ISubscriber<SetUpMainMenuView> _setUpSubscriber;
         private IPublisher<MainMenuButtonPressedEvent> _buttonPressedEventPublisher;
         private IDisposable _disposableForSubscriptions;
         
@@ -23,11 +22,10 @@ namespace TestTankProject.Runtime.UI.MainMenu
             IPublisher<MainMenuButtonPressedEvent> buttonPressedEventPublisher)
         {
             _transform = transform;
-            _setUpSubscriber = setUpSubscriber;
             _buttonPressedEventPublisher = buttonPressedEventPublisher;
             
             DisposableBagBuilder bagBuilder = DisposableBag.CreateBuilder();
-            _setUpSubscriber.Subscribe(OnSetUpCommand).AddTo(bagBuilder);
+            setUpSubscriber.Subscribe(OnSetUpCommand).AddTo(bagBuilder);
             _disposableForSubscriptions = bagBuilder.Build();
         }
 

@@ -4,6 +4,7 @@ using TestTankProject.Runtime.Gameplay;
 using TestTankProject.Runtime.PlayingField;
 using TestTankProject.Runtime.SceneLoading;
 using TestTankProject.Runtime.UI.MainMenu;
+using TestTankProject.Runtime.UI.Scoreboard;
 using TestTankProject.Runtime.UserInput;
 using UnityEngine;
 using VContainer;
@@ -40,6 +41,7 @@ namespace TestTankProject.Runtime.Core
                     _objectResolver.Resolve<List<CardIconConfig>>(),
                     _objectResolver.Resolve<IPublisher<SetUpPlayingField>>(),
                     _objectResolver.Resolve<IPublisher<UpdateCard>>(),
+                    _objectResolver.Resolve<IPublisher<UpdateScoreboard>>(),
                     _objectResolver.Resolve<ISubscriber<CardClickedEvent>>(),
                     _objectResolver.Resolve<ISubscriber<PlayingFieldSetUpEvent>>());
             gameplayManager.StartGame();

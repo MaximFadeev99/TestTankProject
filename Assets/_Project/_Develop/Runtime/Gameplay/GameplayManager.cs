@@ -6,6 +6,7 @@ using MessagePipe;
 using TestTankProject.Runtime.Bootstrap;
 using TestTankProject.Runtime.Gameplay.GameGeneration;
 using TestTankProject.Runtime.PlayingField;
+using TestTankProject.Runtime.UI.Scoreboard;
 using TestTankProject.Runtime.Utilities;
 using UnityEngine;
 
@@ -19,7 +20,8 @@ namespace TestTankProject.Runtime.Gameplay
         
         private readonly IPublisher<SetUpPlayingField> _setUpPlayingFieldPublisher;
         private readonly IPublisher<UpdateCard> _updateCardPublisher;
-        private IDisposable _disposableForSubscriptions;
+        private readonly IPublisher<UpdateScoreboard> _updateScoreboardPublisher;
+        private readonly IDisposable _disposableForSubscriptions;
         
         private GameModel _currentGame;
 
@@ -27,6 +29,7 @@ namespace TestTankProject.Runtime.Gameplay
             IReadOnlyList<CardIconConfig> allRegisteredCardIconConfigs,
             IPublisher<SetUpPlayingField> setUpPlayingFieldPublisher,
             IPublisher<UpdateCard> updateCardPublisher,
+            IPublisher<UpdateScoreboard> updateScoreboardPublisher,
             ISubscriber<CardClickedEvent> cardClickedSubscriber,
             ISubscriber<PlayingFieldSetUpEvent> playingFieldSetUpSubscriber)
         {
@@ -56,6 +59,7 @@ namespace TestTankProject.Runtime.Gameplay
             
             _setUpPlayingFieldPublisher = setUpPlayingFieldPublisher;
             _updateCardPublisher = updateCardPublisher;
+            _updateScoreboardPublisher = updateScoreboardPublisher;
             _iGameGenerator = _selectedGameConfig.ShallShuffleCards ? null : new OrderedGameGeneration();
             
             DisposableBagBuilder bagBuilder = DisposableBag.CreateBuilder();
@@ -68,21 +72,38 @@ namespace TestTankProject.Runtime.Gameplay
         {
             IReadOnlyList<CardModel> cards = _iGameGenerator.GenerateGame(_selectedGameConfig.PlayingFieldSize, 
                 _selectedCardIconConfig.CardIcons, out IReadOnlyList<CardDataForView> cardsForView);
-            
             _currentGame = new GameModel(_selectedGameConfig.InitialCardDemonstrationTime, 
-                _selectedGameConfig.CardDisappearDelay, 
-                cards);
+                _selectedGameConfig.CardDisappearDelay, _selectedGameConfig.PointsPerMatch, _selectedGameConfig.PointsPerMatchStreak,
+                cards, 0, 0,0,0);
+            
             _currentGame.ShowCard += OnShowCardCommand;
             _currentGame.TurnCompleted += OnTurnCompleted;
             _currentGame.CardsMatched += OnCardsMatched;
             _currentGame.CardsMismatched += OnCardsMismatched;
             _currentGame.GameCompleted += OnGameCompleted;
+            
             _setUpPlayingFieldPublisher.Publish(new SetUpPlayingField(_selectedGameConfig.PlayingFieldSize, 
                 _selectedGameConfig.SpacingBetweenCards, cardsForView));
+            _updateScoreboardPublisher.Publish(new UpdateScoreboard(_currentGame.CurrentPoints, 
+                _currentGame.BonusPoints, _currentGame.CurrentMatches, _currentGame.TotalMatchAttempts));
         }
 
-        private void OnPlayingFieldSetUpEvent(PlayingFieldSetUpEvent _)
+        private async void OnPlayingFieldSetUpEvent(PlayingFieldSetUpEvent _)
         {
+            foreach (CardModel card in _currentGame.Cards)
+            {
+                _updateCardPublisher.Publish(new UpdateCard(card.Address, CardActions.RaiseCover));
+                await UniTask.WaitForSeconds(0.2f);
+            }
+            
+            await UniTask.WaitForSeconds(_selectedGameConfig.InitialCardDemonstrationTime);
+            
+            foreach (CardModel card in _currentGame.Cards)
+            {
+                _updateCardPublisher.Publish(new UpdateCard(card.Address, CardActions.PutDownCover));
+                await UniTask.WaitForSeconds(0.2f);
+            }
+
             _currentGame.Status = GameStatus.Running;
         }
 
@@ -117,7 +138,8 @@ namespace TestTankProject.Runtime.Gameplay
 
         private void OnTurnCompleted()
         {
-            
+            _updateScoreboardPublisher.Publish(new UpdateScoreboard(_currentGame.CurrentPoints, 
+                _currentGame.BonusPoints, _currentGame.CurrentMatches, _currentGame.TotalMatchAttempts));
         }
 
         private void OnGameCompleted()
