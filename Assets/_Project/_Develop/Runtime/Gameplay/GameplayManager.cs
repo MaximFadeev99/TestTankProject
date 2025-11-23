@@ -118,7 +118,7 @@ namespace TestTankProject.Runtime.Gameplay
             
             _setUpPlayingFieldPublisher.Publish(new SetUpPlayingField(_selectedGameConfig.PlayingFieldSize, 
                 _selectedGameConfig.SpacingBetweenCards, cardDataForViews));
-            _updateScoreboardPublisher.Publish(new UpdateScoreboard(_currentGame.CurrentPoints, 
+            _updateScoreboardPublisher.Publish(new UpdateScoreboard(_currentGame.CurrentPoints, _currentGame.PointsPerMatch,
                 _currentGame.BonusPoints, _currentGame.CurrentMatches, _currentGame.TotalMatchAttempts));
         }
 
@@ -209,7 +209,7 @@ namespace TestTankProject.Runtime.Gameplay
 
         private void OnTurnCompleted()
         {
-            _updateScoreboardPublisher.Publish(new UpdateScoreboard(_currentGame.CurrentPoints, 
+            _updateScoreboardPublisher.Publish(new UpdateScoreboard(_currentGame.CurrentPoints, _currentGame.PointsPerMatch,
                 _currentGame.BonusPoints, _currentGame.CurrentMatches, _currentGame.TotalMatchAttempts));
         }
 
