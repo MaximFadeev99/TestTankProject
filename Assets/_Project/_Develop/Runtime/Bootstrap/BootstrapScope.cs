@@ -62,7 +62,9 @@ namespace TestTankProject.Runtime.Bootstrap
                 Formatting = Formatting.Indented,
                 Converters = new List<JsonConverter>()
                 {
-                    new Vector2IntConverter()
+                    new Vector2IntConverter(),
+                    new CardModelConverter(),
+                    new GameModelConverter()
                 }
             };
 

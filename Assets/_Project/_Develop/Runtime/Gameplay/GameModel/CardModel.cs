@@ -1,10 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
+using Newtonsoft.Json;
+using TestTankProject.Runtime.Core.SaveLoad;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 namespace TestTankProject.Runtime.Gameplay
 {
+    [JsonConverter(typeof(CardModelConverter))]
     public class CardModel
     {
         internal readonly Vector2Int Address;

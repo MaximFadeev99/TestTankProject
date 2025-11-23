@@ -3,21 +3,23 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TestTankProject.Runtime.Gameplay;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using SerializationConstants = TestTankProject.Runtime.RuntimeConstants.SerializationConstants;
 
 namespace TestTankProject.Runtime.Core.SaveLoad
 {
-    public class CardMovelConverter : JsonConverter<CardModel>
+    public class CardModelConverter : JsonConverter<CardModel>
     {
         public override void WriteJson(JsonWriter writer, CardModel value, JsonSerializer serializer)
         {
             if (writer.WriteState == WriteState.Object)
             {
-                WriteNestedBody(writer, value);
+                WriteNestedBody(writer, value, serializer);
             }
             else
             {
                 writer.WriteStartObject();
-                WriteNestedBody(writer, value);
+                WriteNestedBody(writer, value, serializer);
                 writer.WriteEndObject();
             }
         }
@@ -26,17 +28,24 @@ namespace TestTankProject.Runtime.Core.SaveLoad
             JsonSerializer serializer)
         {
             JObject jObject = JObject.Load(reader);
-
-            return new CardModel(new(), new(), null);
-            //return new CardModel((int)jObject["x"], (int)jObject["y"]);
+            
+            Vector2Int address = serializer.Deserialize<Vector2Int>
+                (jObject[SerializationConstants.Address].CreateReader());
+            Vector2Int matchingCardAddress = serializer.Deserialize<Vector2Int>
+                (jObject[SerializationConstants.MatchingCardAddress].CreateReader());
+            AssetReferenceSprite iconReference = new(jObject[SerializationConstants.IconReference].ToString());
+            
+            return new(address, matchingCardAddress, iconReference);
         }
 
-        private void WriteNestedBody(JsonWriter writer, CardModel value)
+        private void WriteNestedBody(JsonWriter writer, CardModel value, JsonSerializer serializer)
         {
-            /*writer.WritePropertyName("x");
-            writer.WriteValue(value.x);
-            writer.WritePropertyName("y");
-            writer.WriteValue(value.y);*/
+            writer.WritePropertyName(SerializationConstants.Address);
+            serializer.Serialize(writer, value.Address);
+            writer.WritePropertyName(SerializationConstants.MatchingCardAddress);
+            serializer.Serialize(writer, value.MatchingCardAddress);
+            writer.WritePropertyName(SerializationConstants.IconReference);
+            writer.WriteValue(value.IconReference.AssetGUID);
         }
     }
 }

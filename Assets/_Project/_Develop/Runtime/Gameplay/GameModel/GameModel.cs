@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
+using TestTankProject.Runtime.Core.SaveLoad;
 using UnityEngine;
 
 namespace TestTankProject.Runtime.Gameplay
 {
+    [JsonConverter(typeof(GameModelConverter))]
     public class GameModel
     {
         internal readonly float InitialCardShowTime;
