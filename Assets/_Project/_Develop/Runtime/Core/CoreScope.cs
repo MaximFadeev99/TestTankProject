@@ -13,8 +13,12 @@ namespace TestTankProject.Runtime.Core
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterInstance(_sceneCanvas);
-            builder.Register<Raycaster>(Lifetime.Scoped);
-            builder.RegisterEntryPoint<CoreFlow>();
+            builder.RegisterEntryPoint<CoreFlow>(Lifetime.Scoped);
+        }
+        
+        private void OnDestroy()
+        {
+            Container.Dispose();
         }
     }
 }

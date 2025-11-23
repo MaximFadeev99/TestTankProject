@@ -85,7 +85,9 @@ namespace TestTankProject.Runtime.PlayingField
         {
             _raiseCoverTween?.Kill();
             _putDownCoverTween?.Kill();
-            _transform.DOKill();
+            
+            if (_transform != null)
+                _transform.DOKill();
         }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using MessagePipe;
 using TestTankProject.Runtime.Bootstrap;
@@ -22,7 +23,8 @@ namespace TestTankProject.Runtime.Gameplay
         private readonly IPublisher<UpdateCard> _updateCardPublisher;
         private readonly IPublisher<UpdateScoreboard> _updateScoreboardPublisher;
         private readonly IDisposable _disposableForSubscriptions;
-        
+
+        private CancellationTokenSource _gameQuitCts;
         private GameModel _currentGame;
 
         public GameplayManager(IReadOnlyList<GameConfig> allRegisteredGameConfigs, 
@@ -76,6 +78,7 @@ namespace TestTankProject.Runtime.Gameplay
             _currentGame = new GameModel(_selectedGameConfig.InitialCardDemonstrationTime, 
                 _selectedGameConfig.CardDisappearDelay, _selectedGameConfig.PointsPerMatch, _selectedGameConfig.PointsPerMatchStreak,
                 cards, 0, 0,0,0);
+            _gameQuitCts = new CancellationTokenSource();
             
             _currentGame.ShowCard += OnShowCardCommand;
             _currentGame.TurnCompleted += OnTurnCompleted;
@@ -89,20 +92,40 @@ namespace TestTankProject.Runtime.Gameplay
                 _currentGame.BonusPoints, _currentGame.CurrentMatches, _currentGame.TotalMatchAttempts));
         }
 
+        public void SaveGame()
+        {
+            Dispose();
+        }
+
         private async void OnPlayingFieldSetUpEvent(PlayingFieldSetUpEvent _)
         {
+            if (_currentGame == null)
+                return;
+            
             foreach (CardModel card in _currentGame.Cards)
             {
                 _updateCardPublisher.Publish(new UpdateCard(card.Address, CardActions.RaiseCover));
-                await UniTask.WaitForSeconds(0.2f);
+                await UniTask.WaitForSeconds(0.2f, cancellationToken: _gameQuitCts.Token)
+                    .SuppressCancellationThrow();
+
+                if (_gameQuitCts.IsCancellationRequested)
+                    return;
             }
             
-            await UniTask.WaitForSeconds(_selectedGameConfig.InitialCardDemonstrationTime);
+            await UniTask.WaitForSeconds(_selectedGameConfig.InitialCardDemonstrationTime
+                , cancellationToken: _gameQuitCts.Token).SuppressCancellationThrow();;
+            
+            if (_gameQuitCts.IsCancellationRequested || _currentGame == null)
+                return;
             
             foreach (CardModel card in _currentGame.Cards)
             {
                 _updateCardPublisher.Publish(new UpdateCard(card.Address, CardActions.PutDownCover));
-                await UniTask.WaitForSeconds(0.2f);
+                await UniTask.WaitForSeconds(0.2f, cancellationToken: _gameQuitCts.Token)
+                    .SuppressCancellationThrow();;
+                
+                if (_gameQuitCts.IsCancellationRequested)
+                    return;
             }
 
             _currentGame.Status = GameStatus.Running;
@@ -145,14 +168,20 @@ namespace TestTankProject.Runtime.Gameplay
 
         private void OnGameCompleted()
         {
+            Dispose();
+            Debug.Log("Game Completed!");
+        }
+
+        private void Dispose()
+        {
             _disposableForSubscriptions?.Dispose();
+            _gameQuitCts?.Cancel();
             _currentGame.ShowCard -= OnShowCardCommand;
             _currentGame.TurnCompleted -= OnTurnCompleted;
             _currentGame.CardsMatched -= OnCardsMatched;
             _currentGame.CardsMismatched -= OnCardsMismatched;
             _currentGame.GameCompleted -= OnGameCompleted;
             _currentGame = null;
-            Debug.Log("Game Completed!");
         }
     }
 }

@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
 using MessagePipe;
 using TestTankProject.Runtime.Gameplay;
 using TestTankProject.Runtime.PlayingField;
 using TestTankProject.Runtime.SceneLoading;
-using TestTankProject.Runtime.UI.MainMenu;
+using TestTankProject.Runtime.UI.EndGamePanel;
 using TestTankProject.Runtime.UI.Scoreboard;
 using TestTankProject.Runtime.UserInput;
 using UnityEngine;
@@ -19,24 +20,32 @@ namespace TestTankProject.Runtime.Core
         private readonly SceneLoader _sceneLoader;
         private readonly IObjectResolver _objectResolver;
         private readonly Raycaster _raycaster;
+        private readonly IDisposable _disposableForSubscriptions;
+        
+        private GameplayManager _gameplayManager;
 
         public CoreFlow(Camera mainCamera, Canvas sceneCanvas, SceneLoader sceneLoader, Raycaster raycaster,
-            IObjectResolver objectResolver)
+            IObjectResolver objectResolver, ISubscriber<ReturnButtonPressedEvent> returnPressedSubscriber)
         {
             _mainCamera = mainCamera;
             _sceneCanvas = sceneCanvas;
             _sceneLoader = sceneLoader;
             _objectResolver = objectResolver;
             _raycaster = raycaster;
+            
+            DisposableBagBuilder bagBuilder = DisposableBag.CreateBuilder();
+            returnPressedSubscriber.Subscribe(OnReturnPressed).AddTo(bagBuilder);
+            _disposableForSubscriptions = bagBuilder.Build();
         }
 
         public void Start()
         {
+            Debug.Log("Called start on CoreFlow");
             _sceneLoader.MoveObjectToScene(_mainCamera.gameObject, ProjectScenes.Core);
             _sceneCanvas.worldCamera = _mainCamera;
             _sceneCanvas.planeDistance = 5f;
             
-            GameplayManager gameplayManager = new GameplayManager
+            _gameplayManager = new GameplayManager
                 (_objectResolver.Resolve<List<GameConfig>>(), 
                     _objectResolver.Resolve<List<CardIconConfig>>(),
                     _objectResolver.Resolve<IPublisher<SetUpPlayingField>>(),
@@ -44,7 +53,24 @@ namespace TestTankProject.Runtime.Core
                     _objectResolver.Resolve<IPublisher<UpdateScoreboard>>(),
                     _objectResolver.Resolve<ISubscriber<CardClickedEvent>>(),
                     _objectResolver.Resolve<ISubscriber<PlayingFieldSetUpEvent>>());
-            gameplayManager.StartGame();
+            _gameplayManager.StartGame();
+        }
+
+        public void Dispose()
+        {
+            _disposableForSubscriptions?.Dispose();
+            
+            if (_gameplayManager != null)
+                _gameplayManager.SaveGame();
+            
+            _gameplayManager = null;
+            GameObject.DontDestroyOnLoad(_mainCamera);
+            _sceneLoader.LoadScene(ProjectScenes.MainMenu);
+        }
+
+        private void OnReturnPressed(ReturnButtonPressedEvent _)
+        {
+            Dispose();
         }
     }
 }

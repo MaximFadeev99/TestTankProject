@@ -15,7 +15,7 @@ MonoBehaviour:
   StartGameWithMe: 1
   PlayingFieldSize: {x: 4, y: 4}
   SpacingBetweenCards: 0.5
-  InitialCardDemonstrationTime: 3
+  InitialCardDemonstrationTime: 0
   CardDisappearDelay: 1.1
   ShallShuffleCards: 0
   PointsPerMatch: 10

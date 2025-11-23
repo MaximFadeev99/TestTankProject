@@ -5,6 +5,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using MessagePipe;
 using TestTankProject.Runtime.MainMenu;
+using TestTankProject.Runtime.UI.EndGamePanel;
 using TestTankProject.Runtime.UI.MainMenu;
 using UnityEngine;
 using VContainer;
@@ -20,7 +21,6 @@ namespace TestTankProject.Runtime.PlayingField
         [SerializeField] private RectTransform _playingFieldCenterPoint;
         
         private readonly List<CardView> _createdCards = new();
-        //private readonly Dictionary<Vector2Int, CancellationTokenSource> _cardCancellationTokens = new();
 
         private Transform _transform;
         
@@ -34,7 +34,8 @@ namespace TestTankProject.Runtime.PlayingField
         private void Initialize(ISubscriber<SetUpPlayingField> setUpSubscriber, 
             IPublisher<CardClickedEvent> cardClickedEventPublisher,
             IPublisher<PlayingFieldSetUpEvent> playingFieldSetUpPublisher,
-            ISubscriber<UpdateCard> updateCardSubscriber)
+            ISubscriber<UpdateCard> updateCardSubscriber,
+            ISubscriber<ReturnButtonPressedEvent> returnPressedSubscriber)
         {
             _transform = transform;
             _cardClickedEventPublisher = cardClickedEventPublisher;
@@ -43,6 +44,7 @@ namespace TestTankProject.Runtime.PlayingField
             DisposableBagBuilder bagBuilder = DisposableBag.CreateBuilder();
             setUpSubscriber.Subscribe(OnSetUpCommand).AddTo(bagBuilder);
             updateCardSubscriber.Subscribe(OnUpdateCardCommand).AddTo(bagBuilder);
+            returnPressedSubscriber.Subscribe(OnReturnPressedEvent).AddTo(bagBuilder);
             _disposableForSubscriptions = bagBuilder.Build();
         }
 
@@ -75,7 +77,7 @@ namespace TestTankProject.Runtime.PlayingField
             _playingFieldSetUpPublisher.Publish(new());
         }
 
-        private async void OnUpdateCardCommand(UpdateCard updateCommand)
+        private void OnUpdateCardCommand(UpdateCard updateCommand)
         {
             CardView targetCard = _createdCards.First(card => card.Address == updateCommand.CardAddress);
             
@@ -83,39 +85,13 @@ namespace TestTankProject.Runtime.PlayingField
             {
                 case CardActions.RaiseCover:
                     targetCard.RaiseCover();
-                    /*CancellationTokenSource newCts = new();
-                    _cardCancellationTokens[targetCard.Address] = newCts;
-
-                    await UniTask.WaitForSeconds(duration: updateCommand.CardShowTime,
-                        cancellationToken: newCts.Token);
-                    
-                    _cardCancellationTokens.Remove(targetCard.Address);
-                    
-                    if (newCts.IsCancellationRequested)
-                        return;
-                    
-                    targetCard.PutDownCover();*/
                     return;
                 
                 case CardActions.PutDownCover:
-
-                    /*if (_cardCancellationTokens.ContainsKey(targetCard.Address))
-                    {
-                        _cardCancellationTokens[targetCard.Address].Cancel();
-                        _cardCancellationTokens.Remove(targetCard.Address);
-                    }*/
-                    
                     targetCard.PutDownCover();
                     return;
                 
                 case CardActions.Remove:
-                    
-                    /*if (_cardCancellationTokens.ContainsKey(targetCard.Address))
-                    {
-                        _cardCancellationTokens[targetCard.Address].Cancel();
-                        _cardCancellationTokens.Remove(targetCard.Address);
-                    }*/
-                    
                     targetCard.Remove();
                     return;
             }
@@ -170,6 +146,11 @@ namespace TestTankProject.Runtime.PlayingField
         private void OnCardPressed(Vector2Int cardAddress)
         {
             _cardClickedEventPublisher.Publish(new(cardAddress));
+        }
+        
+        private void OnReturnPressedEvent(ReturnButtonPressedEvent _)
+        {
+            OnDestroy();
         }
 
         private void OnDestroy()

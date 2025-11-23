@@ -4,6 +4,8 @@ using TestTankProject.Runtime.Gameplay;
 using TestTankProject.Runtime.MainMenu;
 using TestTankProject.Runtime.PlayingField;
 using TestTankProject.Runtime.SceneLoading;
+using TestTankProject.Runtime.UI.EndGamePanel;
+using TestTankProject.Runtime.UI.EndGamePanel.Commands;
 using TestTankProject.Runtime.UI.MainMenu;
 using TestTankProject.Runtime.UI.Scoreboard;
 using TestTankProject.Runtime.UserInput;
@@ -28,6 +30,7 @@ namespace TestTankProject.Runtime.Bootstrap
             builder.RegisterInstance(_registeredCardIconConfigs);
             builder.Register<SceneLoader>(Lifetime.Singleton);
             builder.Register<InputLogger>(Lifetime.Singleton);
+            builder.Register<Raycaster>(Lifetime.Singleton);
                 
             builder.RegisterEntryPoint<BootstrapFlow>();
         }
@@ -42,6 +45,8 @@ namespace TestTankProject.Runtime.Bootstrap
             builder.RegisterMessageBroker<UpdateCard>(messagePipeOptions);
             builder.RegisterMessageBroker<PlayingFieldSetUpEvent>(messagePipeOptions);
             builder.RegisterMessageBroker<UpdateScoreboard>(messagePipeOptions);
+            builder.RegisterMessageBroker<ReturnButtonPressedEvent>(messagePipeOptions);
+            builder.RegisterMessageBroker<DrawEndGamePanel>(messagePipeOptions);
         }
     }
 }

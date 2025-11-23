@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TestTankProject.Runtime.UserInput
 {
-    public class Raycaster
+    public class Raycaster : IDisposable
     {
         private readonly Camera _mainCamera;
         private readonly LayerMask _cardLayerMask;

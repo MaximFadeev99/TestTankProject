@@ -14,7 +14,7 @@ namespace TestTankProject.Runtime.SceneLoading
         public void LoadScene(ProjectScenes targetScene)
         {
             string targetSceneName = GetSceneNameByEnum(targetScene);
-            SceneManager.LoadScene(targetSceneName);
+            SceneManager.LoadScene(targetSceneName, LoadSceneMode.Single);
         }
 
         public void MoveObjectToScene(GameObject gameObject, ProjectScenes targetScene)

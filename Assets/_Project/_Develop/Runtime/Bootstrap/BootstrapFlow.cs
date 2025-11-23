@@ -1,3 +1,4 @@
+using System;
 using TestTankProject.Runtime.SceneLoading;
 using TestTankProject.Runtime.UserInput;
 using UnityEngine;
@@ -5,7 +6,7 @@ using VContainer.Unity;
 
 namespace TestTankProject.Runtime
 {
-    public class BootstrapFlow : IStartable
+    public class BootstrapFlow : IStartable, IDisposable
     {
         private readonly SceneLoader _sceneLoader;
         private readonly Camera _mainCamera;
@@ -34,6 +35,11 @@ namespace TestTankProject.Runtime
             Screen.autorotateToLandscapeLeft = true;
             Screen.autorotateToLandscapeRight = true;
             Screen.autorotateToPortrait = false;
+        }
+
+        public void Dispose()
+        {
+            
         }
     }
 }
