@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using TestTankProject.Runtime.Utilities;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-namespace BaseBuilding.Tests
+namespace TestTankProject.Runtime.AssetLoading
 {
     public class SpriteLoader
     {
@@ -19,8 +20,8 @@ namespace BaseBuilding.Tests
         {
             if (spriteReference == null)
             {
-                Debug.LogError($"{nameof(SpriteLoader)}: The received reference {spriteReference.AssetGUID} is null or invalid! " +
-                               "Call a programmer!");
+                CustomLogger.Log($"{nameof(SpriteLoader)}", $"The received reference {spriteReference.AssetGUID} is null or invalid!", 
+                    MessageTypes.Exception);
                 return null;
             }
             
@@ -41,8 +42,8 @@ namespace BaseBuilding.Tests
 
             if (sprite == null)
             {
-                Debug.LogError($"{nameof(SpriteLoader)}: The received reference {spriteReference.AssetGUID} is not for a sprite asset! " +
-                               "Call a programmer!");
+                CustomLogger.Log($"{nameof(SpriteLoader)}", $"The received reference {spriteReference.AssetGUID} is not for a sprite asset!", 
+                    MessageTypes.Exception);
                 RemoveReferenceFromCash(targetReference);
                 return null;
             }
@@ -61,9 +62,9 @@ namespace BaseBuilding.Tests
 
             if (targetReference == null)
             {
-                Debug.LogError($"{nameof(SpriteLoader)}: The received reference {spriteReference.AssetGUID} has not been " +
-                               $"loaded by this {nameof(SpriteLoader)} and therefore, can not be released by it! " +
-                               "Call a programmer!");
+                CustomLogger.Log($"{nameof(SpriteLoader)}", $"The received reference {spriteReference.AssetGUID} has not been " +
+                               $"loaded by this {nameof(SpriteLoader)} and therefore, can not be released by it!", 
+                    MessageTypes.Exception);
                 return;
             }
 

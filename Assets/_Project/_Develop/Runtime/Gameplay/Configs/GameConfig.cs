@@ -1,7 +1,5 @@
-using System;
 using TestTankProject.Runtime.Utilities;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace TestTankProject.Runtime.Gameplay
 {
